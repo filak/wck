@@ -4,6 +4,7 @@ export class Page {
     uuid: string;
     policy: string;
     type: string;
+    pagetype: string;
     number: string;
     index: number;
     thumb: string;

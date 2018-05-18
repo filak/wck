@@ -279,6 +279,19 @@
     "soundunit" : "Sound Units",
     "track" : "Tracks"
   },
+  "page-type": {
+    "blank": "Blank",
+    "normalpage": "Page",
+    "frontcover": "Cover",
+    "frontjacket": "Cover",
+    "frontendsheet": "Front sheet",
+    "spine": "Spine",
+    "titlepage": "Title",
+    "tableofcontents": "ToC",
+    "listofillustrations": "Index of ill.",
+    "backendsheet": "Back sheet",
+    "backcover": "Back cover"
+  },
   "calendar" : {
     "months" : {
       "0": "January",

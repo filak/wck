@@ -17,6 +17,8 @@ export class AppSettings {
   public defaultPeriodicalVolumesLayout = APP_GLOBAL.defaultPeriodicalVolumesLayout;
   public defaultPeriodicalIsssuesLayout = APP_GLOBAL.defaultPeriodicalIssuesLayout;
 
+  public lowerPidPath = APP_GLOBAL.lowerPidPath;
+
 }
 
 

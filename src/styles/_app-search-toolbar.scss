@@ -93,6 +93,10 @@ app-search-toolbar {
                 color: $app-type-manuscript;
                 // &:after {border-color: $app-type-manuscript;}
               }
+              &.article {
+                color: $app-type-sheetmusic;
+                // &:after {border-color: $app-type-sheetmusic;}
+              }
 
               // &:after {
               //   content: '';

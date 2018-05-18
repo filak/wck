@@ -167,25 +167,14 @@ export class SearchQuery {
     buildQuery(facet: string): string {
         const qString = this.getQ();
         let q = 'q=';
+
         if (qString) {
-            // if (this.ordering === 'relevance' && !facet) {
-            //     q += '_query_:"{!dismax qf=\'dc.title^1000 dc.creator^1 keywords^1 text^0.0001\' v=$q1}\"';
-            // } else {
-            //     q += '_query_:"{!dismax qf=\'text\' v=$q1}\"';
-            // }
-            // q += '_query_:"{!edismax v=$q1}\"';
             q += '_query_:"{!edismax qf=\'dc.title^10 dc.creator^2 keywords text^0.1\' bq=\'(level:0)^10\' bq=\'(dostupnost:public)^2\' v=$q1}\"';
+            q += ' AND (fedora.model:monograph^5 OR fedora.model:periodical^5 OR fedora.model:soundrecording OR fedora.model:map OR fedora.model:graphic OR fedora.model:sheetmusic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:page OR fedora.model:article)';
 
-
-            // q += '&defType=edismax'
-            // + '&qf=dc.title^10 dc.creator^2 keywords text^0.1'
-            // + '&bq=(level:0)^10&bq=(dostupnost:public)^2';
-
-
-            // q += qString;
-            q += ' AND (fedora.model:monograph^5 OR fedora.model:periodical^5 OR fedora.model:soundrecording OR fedora.model:map OR fedora.model:graphic OR fedora.model:sheetmusic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:page)';
         } else {
-          q += '(fedora.model:monograph^5 OR fedora.model:periodical^5 OR fedora.model:soundrecording OR fedora.model:map OR fedora.model:graphic OR fedora.model:sheetmusic OR fedora.model:archive OR fedora.model:manuscript)';
+          q += '(fedora.model:monograph^5 OR fedora.model:periodical^5 OR fedora.model:soundrecording OR fedora.model:map OR fedora.model:graphic OR fedora.model:sheetmusic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:article)';
+
         }
         if (facet !== 'accessibility') {
             if (this.accessibility === 'public') {
@@ -206,27 +195,23 @@ export class SearchQuery {
            + this.addToQuery('languages', this.languages, facet)
            + this.addToQuery('collections', this.collections, facet)
            + this.getDateOrderingRestriction();
+
         if (qString) {
-            // q += '&defType=edismax'
-            //    + '&qf=dc.title^10 dc.creator^2 keywords text^0.1'
-            //    + '&bq=(level:0)^10&bq=(dostupnost:public)^2'
             q += '&q1=' + qString
-               + '&fl=PID,dostupnost,model_path,dc.creator,root_title,root_pid,datum_str,img_full_mime,score'
+               + '&fl=PID,dostupnost,model_path,fedora.model,model_path,dc.creator,root_title,root_pid,datum_str,img_full_mime,score'
                + '&group=true&group.field=root_pid&group.ngroups=true&group.sort=score desc';
-            // if (environment.solr.facetTruncate) {
+
             q += '&group.truncate=true';
-            //  } else {
-            //    q += '&group.facet=true';
-            //    }
+
         } else {
-            q += '&fl=PID,dostupnost,fedora.model,dc.creator,dc.title,datum_str,img_full_mime';
+            q += '&fl=PID,dostupnost,fedora.model,model_path,dc.creator,dc.title,datum_str,img_full_mime';
         }
-        q += '&facet=true&facet.mincount=1'
+        q += '&facet=true&facet.mincount=1&facet.field=model_path'
            + this.addFacetToQuery(facet, 'keywords', 'keywords', this.keywords.length === 0)
            + this.addFacetToQuery(facet, 'languages', 'language', this.languages.length === 0)
            + this.addFacetToQuery(facet, 'authors', 'facet_autor', this.authors.length === 0)
            + this.addFacetToQuery(facet, 'collections', 'collection', this.collections.length === 0)
-           + this.addFacetToQuery(facet, 'doctypes', 'model_path', this.doctypes.length === 0)
+           + this.addFacetToQuery(facet, 'doctypes', 'fedora.model', this.doctypes.length === 0)
            + this.addFacetToQuery(facet, 'accessibility', 'dostupnost', this.accessibility === 'all');
         if (facet) {
             q += '&rows=0';
@@ -313,7 +298,7 @@ export class SearchQuery {
         if (skip !== field) {
             if (values.length > 0) {
                 if (field === 'doctypes' && this.hasQueryString()) {
-                    q = ' AND (model_path:' + values.join('* OR model_path:') + '*)';
+                    q = ' AND (model_path:*' + values.join('* OR model_path:*') + '*)';
                 } else {
                     q = ' AND (' + SearchQuery.getSolrField(field) + ':"' + values.join('" OR ' + SearchQuery.getSolrField(field) + ':"') + '")';
                 }

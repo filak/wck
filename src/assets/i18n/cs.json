@@ -144,15 +144,15 @@
     "issue": "Číslo",
     "unit": "Část",
     "page": "Strana",
-    "volume_list": "Přejít na periodikum",
+    "volume_list": "Ročníky",
     "issue_date": "Datum vydání",
-    "previous_issue": "Předchozi číslo",   
-    "issue_list": "Přejít na ročník",
+    "previous_issue": "Předchozí číslo",   
+    "issue_list": "Celý ročník",
     "next_issue": "Následující číslo",
     "unit_number": "Číslo",
-    "unit_list": "Přejít na svazek knih",
+    "unit_list": "Seznam částí",
     "next_unit": "Následující část:",
-    "previous_unit": "Předchozi část:",   
+    "previous_unit": "Předchozí část:",   
     "shelf_locator": "Signatura: {{shelf_locator}}",
     "btn_show_metadata": "Zobrazit metadata",
     "btn_hide_metadata": "Skrýt metadata"
@@ -273,6 +273,19 @@
     "internalpart" : "Vnitřní části",
     "soundunit" : "Alba",
     "track" : "Nahrávky"
+  },
+  "page-type": {
+    "blank": "Prázdná",
+    "normalpage": "Strana",
+    "frontcover": "Obálka",
+    "frontjacket": "Obálka",
+    "frontendsheet": "Přídeští",
+    "spine": "Hřbet",
+    "titlepage": "Titulní",
+    "tableofcontents": "Obsah",
+    "listofillustrations": "Sez.il.",
+    "backendsheet": "Přídeští zadní",
+    "backcover": "Obálka zadní"
   },
   "calendar" : {
     "months" : {

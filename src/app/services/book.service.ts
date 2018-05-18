@@ -269,11 +269,13 @@ export class BookService {
                     currentPage = index;
                 }
                 page.policy = p['policy'];
+                page.pagetype = '';
                 const details = p['details'];
                 if (details) {
                     page.type = details['type'];
                     if (page.type) {
                         page.type = page.type.toLowerCase();
+                        page.pagetype = page.type;
                     }
                     page.number = details['pagenumber'];
                 }
@@ -376,10 +378,15 @@ export class BookService {
         return this.activePageIndex;
     }
 
-
     getPageCount(): number {
         return this.pages ? this.pages.length : 0;
     }
+
+    getPageType(): string {
+        return this.pages[this.activePageIndex].pagetype;
+    }
+
+
 
 
     showQuotation() {
@@ -662,6 +669,7 @@ export class BookService {
                         const page = new Page();
                         page.uuid = p['pid'];
                         page.policy = p['policy'];
+                        page.pagetype = '';
                         const details = p['details'];
                         if (details) {
                             page.type = details['type'];
@@ -669,6 +677,7 @@ export class BookService {
                                 page.type = page.type.toLowerCase();
                             }
                             page.number = details['pagenumber'];
+                            page.pagetype = page.type;
                         }
                         if (!page.number) {
                             page.number = p['title'];
@@ -710,7 +719,7 @@ export class BookService {
                     this.publishNewPages(BookPageState.Inaccessible);
                 } else if (error instanceof NotFoundError) {
                     // Not zoomify
-                    const jepgUrl = this.krameriusApiService.getScaledJpegUrl(page.uuid, 3000);
+                    const jepgUrl = this.krameriusApiService.getScaledJpegUrl(page.uuid, 2000);
                     const image = new Image();
                     const subject = this.subject;
                     image.onload = (() => {
@@ -722,7 +731,7 @@ export class BookService {
                         }
                     });
                     image.onerror = (() => {
-                        // JPEF failure
+                        // JPEG failure
                         image.onerror = null;
                         this.publishNewPages(BookPageState.Failure);
                     });

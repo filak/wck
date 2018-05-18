@@ -33,18 +33,20 @@ export class KrameriusApiService {
 
     private BASE_URL: string;
     private API_URL: string;
+    private LPID_PATH: string;
     private cache = {};
 
     constructor(private http: Http,
         private utils: Utils,
         private appSettings: AppSettings,
         private solrService: SolrService) {
+        this.LPID_PATH = appSettings.lowerPidPath;
         this.BASE_URL = appSettings.url;
         this.API_URL = this.BASE_URL + '/search/api/v5.0';
     }
 
     private handleError(error: Response) {
-        if (error.status === 404) {
+        if (error.status === 404 || error.status === 500 || error.status === 0) {
             return Observable.throw(new NotFoundError());
         } else if (error.status === 401 || error.status === 403) {
             return Observable.throw(new UnauthorizedError());
@@ -72,26 +74,6 @@ export class KrameriusApiService {
             .map(response => response.json())
             .catch(this.handleError);
     }
-
-
-    // getSearchResults(query: SearchQuery) {
-    //     let url = this.API_URL + '/search?'
-    //         + query.buildQuery(null);
-
-    //     const ordering = query.getOrderingValue();
-    //     if (ordering) {
-    //         url += '&sort=' + ordering;
-    //     }
-    //     url += '&fl=PID,dostupnost,model_path,dc.creator,root_title,root_pid,datum_str,img_full_mime';
-    //     url += '&group=true&group.field=root_pid&group.ngroups=true&group.truncate=true&group.facet=true';
-    //     url += '&facet=true&facet.mincount=1';
-    //     url += '&facet.field=model_path&facet.field=dostupnost&facet.field=collection&facet.field=facet_autor&facet.field=keywords&facet.field=language';
-    //     url += '&rows=' + query.getRows();
-    //     url += '&start=' + query.getStart();
-    //     return this.doGet(url)
-    //         .map(response => response.json())
-    //         .catch(this.handleError);
-    // }
 
     getBrowseResults(query: BrowseQuery) {
         const url = this.API_URL + '/search?'
@@ -123,7 +105,7 @@ export class KrameriusApiService {
 
 
     getNewest() {
-        const url = this.API_URL + '/search?fl=PID,dostupnost,dc.creator,dc.title,datum_str,fedora.model,img_full_mime&q=(fedora.model:monograph OR fedora.model:periodical OR fedora.model:soundrecording OR fedora.model:map OR fedora.model:graphic OR fedora.model:sheetmusic OR fedora.model:archive OR fedora.model:manuscript)+AND+dostupnost:public&sort=created_date desc&rows=24&start=0';
+        const url = this.API_URL + '/search?fl=PID,dostupnost,dc.creator,dc.title,datum_str,fedora.model,img_full_mime&q=(fedora.model:monograph OR fedora.model:periodical OR fedora.model:soundrecording OR fedora.model:map OR fedora.model:graphic OR fedora.model:sheetmusic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:article)+AND+dostupnost:public&sort=created_date desc&rows=24&start=0';
         return this.doGet(url)
             .map(response => this.solrService.documentItems(response.json()))
             .catch(this.handleError);
@@ -158,8 +140,15 @@ export class KrameriusApiService {
 
     private getPeriodicalItems(pidPath: string, level: number, models: string[], query: PeriodicalQuery, applyYear: boolean) {
         const modelRestriction = models.map(a => 'fedora.model:' + a).join(' OR ');
-        let url = this.API_URL + '/search?fl=PID,dostupnost,fedora.model,dc.title,datum_str,details&q=pid_path:'
-                + pidPath + '/* AND level:' + level + ' AND (' + modelRestriction + ')';
+
+        if (this.LPID_PATH) {
+            var ppath = pidPath.toLowerCase();
+        } else {
+            var ppath = pidPath;
+        }
+
+        let url = this.API_URL + '/search?fl=PID,dostupnost,fedora.model,model_path,dc.title,datum_str,details&q=pid_path:'
+                + ppath + '/* AND level:' + level + ' AND (' + modelRestriction + ')';
         if (query && (query.accessibility === 'private' || query.accessibility === 'public')) {
             url += ' AND dostupnost:' + query.accessibility;
         }
@@ -211,7 +200,7 @@ export class KrameriusApiService {
     }
 
     getPeriodicalItemDetails(uuids: string[]) {
-        const url = this.API_URL + '/search?fl=PID,details,dostupnost,fedora.model,dc.title,datum_str&q=PID:"' + uuids.join('" OR PID:"') + '"&rows=50';
+        const url = this.API_URL + '/search?fl=PID,details,dostupnost,fedora.model,model_path,dc.title,datum_str&q=PID:"' + uuids.join('" OR PID:"') + '"&rows=50';
         return this.doGet(url)
             .map(response => response.json())
             .catch(this.handleError);
@@ -228,7 +217,7 @@ export class KrameriusApiService {
         }
         let result = this.API_URL + '/search/?fl=PID,dc.title,dc.creator&q='
         + '(fedora.model:monograph^5 OR fedora.model:periodical^4 OR fedora.model:map '
-        + 'OR fedora.model:graphic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:sheetmusic OR fedora.model:soundrecording)';
+        + 'OR fedora.model:graphic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:sheetmusic OR fedora.model:soundrecording OR fedora.model:article)';
         if (onlyPublic) {
             result += ' AND dostupnost:public';
         } else {

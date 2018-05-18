@@ -220,20 +220,33 @@ export class SolrService {
         return list;
     }
 
-    facetDoctypeList(solr, joinedDocytypes: boolean, doctypes: string[]) {
+    facetDoctypeList(solr, joinedDoctypes: boolean, doctypes: string[]) {
         const map = {};
         for (const doctype of doctypes) {
             map[doctype] = 0;
         }
         const list = [];
-        const facetFields = solr['facet_counts']['facet_fields']['model_path'];
+
+        // TODO
+        // facetFields = [];
+
+        var params = solr['responseHeader']['params']['group'];
+
+        if (params) {
+            var facetFlds = solr['facet_counts']['facet_fields']['model_path'];
+        } else {
+            var facetFlds = solr['facet_counts']['facet_fields']['fedora.model'];
+        }
+
+        const facetFields = facetFlds;
+
         for (let i = 0; i < facetFields.length; i += 2) {
             const f = facetFields[i];
             if (f.indexOf('/') < 0) {
                 if (map[f] !== undefined) {
                     map[f] += facetFields[i + 1];
                 }
-            } else if (!joinedDocytypes) {
+            } else if (!joinedDoctypes) {
                 const ff = f.split('/')[0];
                 if (map[ff] !== undefined) {
                     map[ff] += facetFields[i + 1];

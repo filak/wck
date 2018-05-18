@@ -41,16 +41,20 @@ export class MetadataComponent implements OnInit {
     console.log('query', query);
     let uuid: string;
     if (path.indexOf('uuid:') > -1) {
-      uuid = path.substr(path.indexOf('uuid:'), 41);
+      uuid = path.substr(path.indexOf('uuid:'));
     }
     if (!uuid) {
       return;
     }
     if (query.indexOf('article=uuid:') > -1) {
-      uuid = query.substr(query.indexOf('article=uuid:') + 8, 49);
+      uuid = query.substr(query.indexOf('article=uuid:') + 8);
     }
     if (query.indexOf('page=uuid:') > -1) {
-      uuid = query.substr(query.indexOf('page=uuid:') + 5, 46);
+      uuid = query.substr(query.indexOf('page=uuid:') + 5);
+    }
+
+    if (uuid.indexOf('&') > -1) {
+      uuid = uuid.substr(0, uuid.indexOf('&'));
     }
 
     let url: string;
@@ -61,5 +65,6 @@ export class MetadataComponent implements OnInit {
     }
     return url;
   }
+
 
 }
