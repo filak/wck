@@ -1,0 +1,33 @@
+// --- SEARCH RESULTS --
+
+app-search-results {
+  display: block;
+  height: calc(100% - #{$app-toolbar-height});
+  overflow: auto;
+  padding: 0.5rem;
+  background-color: $app-grey-l-4;
+  
+  &.app-search-results-no-toolbar {
+    height: 100%;
+  }
+  
+  app-document-card {
+    float: left;
+    width:16.66666%;
+    @media (max-width: 2300px) {
+      width:20%;
+    }
+    @media (max-width: 1900px) {
+      width:25%;
+    }
+    @media (max-width: 1500px) {
+      width:33.33333%;
+    }
+    @media (max-width: 1260px) {
+      width:50%;
+    }
+    @media (max-width: 900px) {
+      width:100%;
+    }
+  }
+}

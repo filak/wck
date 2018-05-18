@@ -1,0 +1,80 @@
+<div class="row app-clean-mg">
+  <div class="col app-periodical-info" [ngClass]="{'s6 m5 l7 xl9 app-no-volume-detail': !periodicalService.volumeDetail, 's4 m4 l4 xl5': periodicalService.volumeDetail}">
+    <a *ngIf="periodicalService.isPeriodicalVolume()" [routerLink]="['/periodical', periodicalService.document.root_uuid]" [queryParams]="periodicalService.getUrlParams()">
+      <i class="app-mdi-periodical-previous" mz-tooltip [tooltip]="'periodical.volume_list' | translate" position="bottom"></i>
+      <span class="app-periodical-title">{{periodicalService.metadata.getTitle()}}</span>
+    </a>
+    <span *ngIf="periodicalService.isPeriodical() || periodicalService.isMonograph()" class="app-periodical-title">{{periodicalService.metadata.getTitle()}}</span>
+  </div>
+  
+  
+  <div class="col s4 m4 l4 xl2 app-volume-info center-align" *ngIf="periodicalService.volumeDetail">
+    <span *ngIf="periodicalService.volumeDetail">
+      <a *ngIf="periodicalService.volumeDetail.previous" [routerLink]="['/periodical', periodicalService.volumeDetail.previous.uuid]" [queryParams]="periodicalService.getUrlParams()"
+        class="app-mdi-periodical-previous" mz-tooltip [tooltip]="'periodical.previous_volume' | translate" [position]="'bottom'">
+      </a>
+      <a *ngIf="!periodicalService.volumeDetail.previous" class="app-mdi-periodical-previous disabled"></a>
+      <span class="app-volume-title">{{ periodicalService.volumeDetail.current.title }}</span>
+      <a *ngIf="periodicalService.volumeDetail.next" [routerLink]="['/periodical', periodicalService.volumeDetail.next.uuid]" [queryParams]="periodicalService.getUrlParams()"
+        class="app-mdi-periodical-next" mz-tooltip [tooltip]="'periodical.next_volume' | translate" [position]="'bottom'">
+      </a>
+      <a *ngIf="!periodicalService.volumeDetail.next" class="app-mdi-periodical-next disabled"></a>
+    </span>
+  </div>
+
+  <div class="col app-nav-item" [ngClass]="{'s6 m7 l5 xl3 app-mq-small-1 app-no-volume-detail': !periodicalService.volumeDetail, 's4 m4 l4 xl5': periodicalService.volumeDetail}">
+    <ul class="right">
+
+      <li *ngIf="periodicalService.orderingType === 'periodical' && periodicalService.activeLayout === 'grid'" class="app-nav-item-sort" [class.app-fulltext-active]="periodicalService.fulltext">
+        <span disabled id="app-btn-sort" class="app-cursor-pointer" mz-tooltip [tooltip]="'search.ordering.label' | translate" [position]="'top'">
+          <i class="app-mdi-sort"></i>
+        </span>
+        <mz-dropdown [id]="'app-sort'" [dropdownButtonId]="'app-btn-sort'" [constrainWidth]="false">
+          <mz-dropdown-item><a (click)="periodicalService.setReverseOrder(false)">Od nejstarších</a></mz-dropdown-item>
+          <mz-dropdown-item><a (click)="periodicalService.setReverseOrder(true)">Od nejnovějších</a></mz-dropdown-item>
+        </mz-dropdown>
+      </li>
+      <li *ngIf="periodicalService.orderingType === 'fulltext'" class="app-nav-item-sort" [class.app-fulltext-active]="periodicalService.fulltext">
+        <span disabled id="app-btn-sort" class="app-cursor-pointer" mz-tooltip [tooltip]="'search.ordering.label' | translate" [position]="'top'">
+          <i class="app-mdi-sort"></i>
+        </span>
+        <mz-dropdown [id]="'app-sort'" [dropdownButtonId]="'app-btn-sort'" [constrainWidth]="false">
+          <mz-dropdown-item><a (click)="periodicalService.setOrdering('relevance')">Podle relevance</a></mz-dropdown-item>
+          <mz-dropdown-item><a (click)="periodicalService.setOrdering('earliest')">Od nejstarších</a></mz-dropdown-item>
+          <mz-dropdown-item><a (click)="periodicalService.setOrdering('latest')">Od nejnovějších</a></mz-dropdown-item>
+        </mz-dropdown>
+      </li>
+
+      <li class="app-nav-item-mobile app-nav-item-tablet" [class.active]="periodicalService.activeMobilePanel == 'filters'">
+        <span (click)="periodicalService.activeMobilePanel = 'filters'" class="app-cursor-pointer">
+          <i class="app-mdi-filter"></i>
+        </span>
+      </li>
+      <li *ngIf="!periodicalService.fulltext && periodicalService.gridLayoutEnabled" (click)="selectLayout('grid')" [class.active]="periodicalService.activeLayout == 'grid' && periodicalService.activeMobilePanel != 'filters'" [class.active-mobile-dismiss]="periodicalService.activeMobilePanel != 'content'">
+        <span mz-tooltip [tooltip]="'toolbar.tooltip_display_grid' | translate" [position]="'top'" class="app-cursor-pointer">
+          <i class="app-mdi-view-grid"></i>
+        </span>
+      </li>
+      <li *ngIf="!periodicalService.fulltext && periodicalService.yearsLayoutEnabled" (click)="selectLayout('years')" class="layout-button" [class.active]="periodicalService.activeLayout == 'years'" [class.active-mobile-dismiss]="periodicalService.activeMobilePanel != 'content'">
+        <span mz-tooltip [tooltip]="'toolbar.tooltip_display_years' | translate" [position]="'top'" class="app-cursor-pointer">
+          <i class="app-mdi-calendar-blank"></i>
+        </span>
+      </li>
+      <li *ngIf="!periodicalService.fulltext && periodicalService.calendarLayoutEnabled" (click)="selectLayout('calendar')" class="layout-button" [class.active]="periodicalService.activeLayout == 'calendar'" [class.active-mobile-dismiss]="periodicalService.activeMobilePanel != 'content'">
+        <span mz-tooltip [tooltip]="'toolbar.tooltip_display_calendar' | translate" [position]="'top'" class="app-cursor-pointer">
+          <i class="app-mdi-calendar-range"></i>
+        </span>
+      </li>
+      <li *ngIf="periodicalService.fulltext" class="app-nav-item-mobile app-nav-item-tablet" [class.active]="periodicalService.activeMobilePanel == 'content'">
+        <span (click)="periodicalService.activeMobilePanel = 'content'" class="app-cursor-pointer">
+          <i class="app-mdi-view-grid"></i>
+        </span>
+      </li>
+      <li class="app-nav-item-mobile" [class.active]="periodicalService.activeMobilePanel == 'metadata'">
+        <span (click)="periodicalService.activeMobilePanel = 'metadata'" class="app-cursor-pointer">
+          <i class="app-mdi-information"></i>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>

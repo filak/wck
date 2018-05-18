@@ -1,0 +1,99 @@
+// --- NAVBAR ---
+
+app-navbar {
+  nav {
+    position: relative;
+    z-index: 995;
+    background-color: $app-grey-l-5;
+    @include set-border(bottom, 1, solid, $app-grey-c-1);
+    box-shadow: 0 2px 2px 0 rgba(38, 50, 56, 0), 0 1px 5px 0 rgba(38, 50, 56, 0.12), 0 3px 1px -20px rgba(38, 50, 56, 0.1);
+    
+    .nav-wrapper {
+      .app-arrow-left {
+        color: $app-grey;
+        
+        /* if arrow left is hidden
+        @media #{$small-and-down} {
+          display: none;
+        }
+        */
+        
+        .mdi-arrow-left {
+          margin-right: 7px;
+        }
+      }
+      
+      .col {
+        float: left;
+        
+        &.app-col-left {
+          width: $app-side-col-width;
+          padding-left: 15px;
+          
+          //mq
+          @media #{$small-and-down} {
+            width: $app-mobile-logo-width;
+          }
+          @media #{$small-and-down} {
+            &.app-col-hidden {
+              display: none;
+            }
+          }
+        }
+        
+        &.app-col-right {
+          width: calc(100% - #{$app-side-col-width});
+          
+          .app-btn-search-bar {
+            display: none;
+          }
+          
+          // mq
+          @media #{$small-and-down} {
+            width: calc(100% - #{$app-mobile-logo-width});
+          }
+          @media #{$small-400-and-down} {
+            &.app-search-bar-displayed {
+              padding-left: 1rem;
+              width: 100%;
+            }
+            .app-btn-search-bar {
+              display: block; 
+            }
+          }
+          
+        }
+        
+        &.app-col-right-home {
+          width: 100%;
+        }
+      }
+    }
+  }
+  
+  // btn side nav
+  #app-btn-sidenav {
+    padding: 0 1rem;
+    
+    @media #{$small-400-and-down} {
+      padding-left: 10px;
+    }
+  }
+  
+  // side nav
+  .side-nav {
+    z-index: 1026;
+
+    .subheader {
+      background-color: $primary-color;
+      color: color("shades", "white");
+      height: $navbar-height;
+      line-height: $navbar-height;
+      font-size: 1.4rem;
+    }
+  }
+}
+
+#sidenav-overlay {
+  z-index: 1005;
+}

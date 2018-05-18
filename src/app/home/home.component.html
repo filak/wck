@@ -1,0 +1,51 @@
+<div class="app-content-wrapper">
+  <section class="container center-align home-top">
+    <div class="row">
+      <div class="col s12">
+        <app-logo></app-logo>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col offset-s1 s10 offset-s1 offset-m3 m6 offset-m3 offset-l3 l6 offset-l3 offset-xl4 xl4 offset-xl4">
+        <div class="divider"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 app-desc">
+        <span>{{'app-name' | translate}}</span> |
+        <span>{{'home.desc' | translate}}</span>
+        <mz-badge [caption]="'common.beta_version' | translate" [badgeClass]="'app-beta'"></mz-badge>
+      </div>
+    </div>
+    <app-home-search-bar></app-home-search-bar>
+  </section>
+
+  <div class="container app-featured">
+    <div class="tabs">
+      <div class="tab" [class.active]="selectedTab === 'visited'" (click)="changeTab('visited')">
+        {{ 'home.tab_visited' | translate }}
+      </div>
+      <div class="tab" [class.active]="selectedTab === 'newest'" (click)="changeTab('newest')">
+        {{ 'home.tab_latest' | translate }}
+      </div>
+      <div class="tab" [class.active]="selectedTab === 'recommended'" (click)="changeTab('recommended')">
+        {{ 'home.tab_recommended' | translate }}
+      </div>
+    </div>
+
+    <div class="app-tab-content row">
+      <app-document-card *ngFor="let item of getActiveItems()" [item]="item" class="col s12 m6 l6 xl4"></app-document-card>
+    </div>
+
+    <app-paginator 
+        [activeIndex]="page"
+        [overallCount]="getNumberOfActiveItems()"
+        [step]="step"
+        (next)="page = page + 1"
+        (previous)="page = page - 1"
+        (change)="page = $event">
+    </app-paginator> 
+  </div>
+
+
+</div>

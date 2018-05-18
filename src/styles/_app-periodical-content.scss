@@ -1,0 +1,34 @@
+// --- PERIODICAL CONTENT ---
+
+app-periodical-content {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  
+  .app-periodical-content-wrapper {
+    background: $app-white;
+    height: 100%;
+
+    // common
+    app-periodical-grid-layout,
+    app-periodical-years-layout,
+    app-periodical-fulltext-layout,
+    app-periodical-calendar-layout {
+      height: calc( 100% - #{$app-toolbar-height});
+      display: block;
+      background-color: $app-grey-l-4;
+    }
+    
+    @import "styles/app-periodical-toolbar";
+    @import "styles/app-periodical-grid-layout";
+    @import "styles/app-periodical-fulltext-layout";
+    @import "styles/app-periodical-calendar-layout";
+    @import "styles/app-periodical-years-layout";
+  }
+}
+
+.spinner-wrapper {
+  flex: 1;
+  height: 100%;
+  position: relative;
+}

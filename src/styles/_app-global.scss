@@ -1,0 +1,74 @@
+// --- GLOBAL ---
+
+body {
+  font-family: 'Roboto-Condensed-Regular';
+}
+
+* {
+  box-sizing: border-box;    
+}
+
+:-ms-fullscreen {
+  width: auto;
+  height: auto;
+  margin: auto;
+}
+
+a,
+.app-cursor-pointer {
+  cursor: pointer !important;
+}
+
+// font
+.app-font-bold {
+  font-family: 'Roboto-Condensed-Bold';
+}
+
+//cleaners
+.app-clean-mg {
+  margin: 0 !important;
+}
+
+.app-clean-pd {
+  padding: 0 !important;
+}
+
+.app-clean-border {
+  border: 0 !important;
+}
+
+// clearfix
+.clearfix {
+  @include clearfix();
+}
+
+// others
+button {
+  @extend .z-depth-0;
+  i {
+    &.left {
+      margin-right: 5px;
+    }
+    &.right {
+      margin-left: 5px;
+    } 
+  }
+}
+
+// mdi
+i.left {
+  margin-right: 5px;
+}
+
+mz-spinner.medium-centered-spinner {
+  position: absolute;
+  top: calc(50% - 20px);
+  left: calc(50% - 20px);
+}
+
+// mq
+@media #{$medium-and-down} {
+  .material-tooltip {
+    display: none !important;
+  }
+}

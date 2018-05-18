@@ -1,0 +1,32 @@
+<div class="app-music-controls-wrapper">
+  <div class="app-controls-buttons-wrapper">
+      <i *ngIf="musicService.activeTrack && !musicService.isPlaying()" 
+          mz-icon-mdi 
+          (click)="musicService.playTrack()"
+          [size]="'48px'" 
+          [icon]="'play'"  
+          class="app-controls-button app-controls-button-play">
+      </i>
+      <i *ngIf="musicService.activeTrack && musicService.isPlaying()" 
+          mz-icon-mdi 
+          (click)="musicService.pauseTrack()"
+          [size]="'48px'" 
+          [icon]="'pause'" 
+          class="app-controls-button app-controls-button-pause">
+      </i>
+  </div>
+  <div class="app-soundunit-info-wrapper hide-on-small-only hide-on-med-only">
+      <div class="app-soundunit-info" *ngIf="musicService.activeTrack">
+        <div class="app-soundunit-image" [style.background-image]="soundUnitImage()"></div>
+        <div class="app-track-title">{{ musicService.activeTrack.name }}</div>
+        <div class="app-soundunit-title">{{ musicService.activeTrack.unit.name }}</div>
+      </div>
+  </div>
+  <div class="app-track-progress-wrapper">
+      <div class="app-track-position">{{ musicService.trackPositionText }}</div>
+      <div class="app-track-slider">
+        <input #trackSlider (change)="trackSliderChanged()" type="range" value="{{ musicService.trackPosition }}" step="1" min="0" max="{{ musicService.trackDuration }}"/>
+      </div>
+      <div class="app-track-duration">{{ musicService.trackDurationText }}</div>
+  </div>
+</div>

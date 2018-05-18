@@ -1,0 +1,12 @@
+<mz-collection>
+  <mz-collection-item>
+    <i class="app-mdi-book-print app-cursor-pointer" (click)="bookService.prepareToPrint()"
+       mz-tooltip [tooltip]="'book_controls.tooltip_print' | translate" [position]="'bottom'"></i>
+    <i class="app-mdi-book-pdf app-cursor-pointer" (click)="bookService.generatePdf()"
+       mz-tooltip [tooltip]="'book_controls.tooltip_pdf' | translate" [position]="'bottom'"></i>
+    <i class="app-mdi-book-jpg app-cursor-pointer"  (click)="bookService.showJpeg()"
+       mz-tooltip [tooltip]="'book_controls.tooltip_jpg' | translate" [position]="'bottom'"></i>
+    <i class="app-mdi-book-ocr app-cursor-pointer" (click)="bookService.showOcr()"
+       mz-tooltip [tooltip]="'book_controls.tooltip_ocr' | translate" [position]="'bottom'"></i>
+  </mz-collection-item>
+</mz-collection>

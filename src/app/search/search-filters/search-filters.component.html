@@ -1,0 +1,208 @@
+<app-search-count></app-search-count>
+
+<div class="app-filters-wrapper">
+  <app-search-filters-used *ngIf="searchService.query.anyFilter()"></app-search-filters-used>
+  
+  <mz-collapsible [mode]="'expandable'">
+    <mz-collapsible-item [active]="collapsedFilter">
+      <mz-collapsible-item-header>
+        {{ 'search.accessibility.label' | translate }}
+        <i mz-icon-mdi [icon]="'chevron-down'" [class]="'app-clean-mg'"></i>
+        <i mz-icon-mdi [icon]="'chevron-left'" [class]="'app-clean-mg'"></i>
+      </mz-collapsible-item-header>
+      <mz-collapsible-item-body>
+      <mz-collection *ngIf="searchService.accessibility">
+        <ng-container>
+          <mz-collection-item *ngFor="let item of searchService.accessibility;">
+            <span [class.selected]="item.value === searchService.query.accessibility" class="app-row">
+              <a (click)="searchService.setAccessibility(item.value)">{{ 'search.accessibility.' + item.value | translate}}</a>
+              <span>
+                {{item.count}}
+              </span>
+            </span>
+          </mz-collection-item>
+        </ng-container>
+      </mz-collection>
+      </mz-collapsible-item-body>
+    </mz-collapsible-item>
+  </mz-collapsible>
+
+   
+  <mz-collapsible [mode]="'expandable'" *ngIf="searchService.doctypes?.length" class="hide-on-large-only">
+    <mz-collapsible-item [active]="collapsedFilter">
+      <mz-collapsible-item-header>
+        {{ 'search.doctypes' | translate }}   
+        <i mz-icon-mdi [icon]="'chevron-down'" [class]="'app-clean-mg'"></i>
+        <i mz-icon-mdi [icon]="'chevron-left'" [class]="'app-clean-mg'"></i>
+      </mz-collapsible-item-header>
+      <mz-collapsible-item-body>
+      <mz-collection *ngIf="searchService.doctypes">
+        <ng-container>
+          <mz-collection-item *ngFor="let item of searchService.doctypes;">
+            <span class="app-row">
+              <a (click)="searchService.toggleFilter(searchService.query.doctypes, item.value)">{{'model.' + item.value | translate }}</a>
+              <span>
+                {{item.count}}
+              </span>
+            </span>
+          </mz-collection-item>
+        </ng-container>
+      </mz-collection>
+      </mz-collapsible-item-body>
+    </mz-collapsible-item>
+  </mz-collapsible>     
+
+
+  <mz-collapsible [mode]="'expandable'" *ngIf="searchService.keywords?.length">
+    <mz-collapsible-item [active]="collapsedFilter">
+      <mz-collapsible-item-header>
+        {{ 'search.keywords' | translate }}            
+        <i mz-icon-mdi [icon]="'chevron-down'" [class]="'app-clean-mg'"></i>
+        <i mz-icon-mdi [icon]="'chevron-left'" [class]="'app-clean-mg'"></i>
+      </mz-collapsible-item-header>
+      <mz-collapsible-item-body>
+      <mz-collection *ngIf="searchService.keywords">
+        <ng-container>
+          <mz-collection-item *ngFor="let item of searchService.keywords; let i = index;">
+            <span class="app-row" *ngIf="i < 6 || keywordsExpanded">
+              <a (click)="searchService.toggleFilter(searchService.query.keywords, item.value)">{{item.value}}</a>
+              <span>
+                {{item.count}}
+              </span>
+            </span>
+          </mz-collection-item>
+          <mz-collection-item *ngIf="searchService.keywords.length > 6">
+              <span class="app-row">
+                <a class="light-blue-text text-darken-3" *ngIf="!keywordsExpanded" (click)="keywordsExpanded = true">{{'filters.btn_show_more' | translate}}</a>  
+                <a class="light-blue-text text-darken-3" *ngIf="keywordsExpanded" (click)="keywordsExpanded = false">{{'filters.btn_show_less' | translate}}</a>
+              </span>
+            </mz-collection-item>
+        </ng-container>
+      </mz-collection>
+      </mz-collapsible-item-body>
+    </mz-collapsible-item>
+  </mz-collapsible>
+
+
+  <mz-collapsible [mode]="'expandable'" *ngIf="searchService.authors?.length">
+    <mz-collapsible-item [active]="collapsedFilter">
+      <mz-collapsible-item-header>
+        {{ 'search.authors' | translate }}   
+        <i mz-icon-mdi [icon]="'chevron-down'" [class]="'app-clean-mg'"></i>
+        <i mz-icon-mdi [icon]="'chevron-left'" [class]="'app-clean-mg'"></i>
+      </mz-collapsible-item-header>
+      <mz-collapsible-item-body>
+      <mz-collection *ngIf="searchService.authors">
+        <ng-container>
+          <mz-collection-item *ngFor="let item of searchService.authors; let i = index;">
+            <span class="app-row" *ngIf="i < 6 || authorsExpanded">
+              <a (click)="searchService.toggleFilter(searchService.query.authors, item.value)">{{item.value}}</a>
+              <span>
+                {{item.count}}
+              </span>
+            </span>
+          </mz-collection-item>
+          <mz-collection-item *ngIf="searchService.authors.length > 6">
+              <span class="app-row">
+                <a class="light-blue-text text-darken-3" *ngIf="!authorsExpanded" (click)="authorsExpanded = true">{{'filters.btn_show_more' | translate}}</a>  
+                <a class="light-blue-text text-darken-3" *ngIf="authorsExpanded" (click)="authorsExpanded = false">{{'filters.btn_show_less' | translate}}</a>
+              </span>
+            </mz-collection-item>
+        </ng-container>
+      </mz-collection>
+      </mz-collapsible-item-body>
+    </mz-collapsible-item>
+  </mz-collapsible>
+
+  <mz-collapsible [mode]="'expandable'" *ngIf="searchService.languages?.length">
+    <mz-collapsible-item [active]="collapsedFilter">
+      <mz-collapsible-item-header>
+        {{ 'search.languages' | translate }}   
+        <i mz-icon-mdi [icon]="'chevron-down'" [class]="'app-clean-mg'"></i>
+        <i mz-icon-mdi [icon]="'chevron-left'" [class]="'app-clean-mg'"></i>
+      </mz-collapsible-item-header>
+      <mz-collapsible-item-body>
+      <mz-collection *ngIf="searchService.languages">
+        <ng-container>
+          <mz-collection-item *ngFor="let item of searchService.languages; let i = index;">
+            <span class="app-row" *ngIf="i < 6 || languagesExpanded">
+              <a (click)="searchService.toggleFilter(searchService.query.languages, item.value)">{{'language.' + item.value | translate }}</a>
+              <span>
+                {{item.count}}
+              </span>
+            </span>
+          </mz-collection-item>
+          <mz-collection-item *ngIf="searchService.languages.length > 6">
+              <span class="app-row">
+                <a class="light-blue-text text-darken-3" *ngIf="!languagesExpanded" (click)="languagesExpanded = true">{{'filters.btn_show_more' | translate}}</a>  
+                <a class="light-blue-text text-darken-3" *ngIf="languagesExpanded" (click)="languagesExpanded = false">{{'filters.btn_show_less' | translate}}</a>
+              </span>
+            </mz-collection-item>
+        </ng-container>
+      </mz-collection>
+      </mz-collapsible-item-body>
+    </mz-collapsible-item>
+  </mz-collapsible>    
+
+  <mz-collapsible [mode]="'expandable'" *ngIf="searchService.collections?.length">
+    <mz-collapsible-item [active]="collapsedFilter">
+      <mz-collapsible-item-header>
+        {{ 'search.collections' | translate }}   
+        <i mz-icon-mdi [icon]="'chevron-down'" [class]="'app-clean-mg'"></i>
+        <i mz-icon-mdi [icon]="'chevron-left'" [class]="'app-clean-mg'"></i>
+      </mz-collapsible-item-header>
+      <mz-collapsible-item-body>
+      <mz-collection *ngIf="searchService.collections">
+        <ng-container>
+          <mz-collection-item *ngFor="let item of searchService.collections; let i = index;">
+            <span class="app-row" *ngIf="i < 6 || collectionsExpanded">
+              <a (click)="searchService.toggleFilter(searchService.query.collections, item.value)">{{ item.name }}</a>
+              <span>
+                {{item.count}}
+              </span>
+            </span>
+          </mz-collection-item>
+          <mz-collection-item *ngIf="searchService.collections.length > 6">
+              <span class="app-row">
+                <a class="light-blue-text text-darken-3" *ngIf="!collectionsExpanded" (click)="collectionsExpanded = true">{{'filters.btn_show_more' | translate}}</a>  
+                <a class="light-blue-text text-darken-3" *ngIf="collectionsExpanded" (click)="collectionsExpanded = false">{{'filters.btn_show_less' | translate}}</a>
+              </span>
+            </mz-collection-item>
+        </ng-container>
+      </mz-collection>
+      </mz-collapsible-item-body>
+    </mz-collapsible-item>
+  </mz-collapsible>   
+
+
+
+
+
+  <mz-collapsible [mode]="'expandable'">
+    <mz-collapsible-item [active]="collapsedFilter">
+      <mz-collapsible-item-header>
+        {{ 'search.year-range.label' | translate }}
+        <i mz-icon-mdi [icon]="'chevron-down'" [class]="'app-clean-mg'"></i>
+        <i mz-icon-mdi [icon]="'chevron-left'" [class]="'app-clean-mg'"></i>
+      </mz-collapsible-item-header>
+      <mz-collapsible-item-body>
+        <div class="year-range-wrapper">
+          <div class="year-range">
+            <span>{{ 'search.year-range.from' | translate }}</span>
+            <input [(ngModel)]="yearFrom" (change)="onYearFromValueChanged()" type="number">
+            <span>{{ 'search.year-range.to' | translate }}</span>
+            <input [(ngModel)]="yearTo" (change)="onYearToValueChanged()" type="number">
+          </div>
+
+          <a class="light-blue darken-3 z-depth-0 btn waves-effect waves-light" mz-button (click)="applyYearRange()">
+            <span>{{ 'search.year-range.apply' | translate }}</span>
+          </a>
+        </div>
+
+
+      </mz-collapsible-item-body>
+    </mz-collapsible-item>
+  </mz-collapsible>
+
+
+</div>

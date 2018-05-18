@@ -1,0 +1,43 @@
+// --- ALERTS ---
+
+app-alert {
+ .alert {   
+    @extend .text-darken-4, .z-depth-0;
+    margin-bottom: 0;
+    margin-top: 60px;
+
+    &.alert-success {
+      @extend .green-text;
+    }
+
+    &.alert-info {
+      @extend .blue-text;
+    }
+
+    &.alert-warning {
+      @extend .yellow-text;
+    }
+
+    &.alert-danger {
+      @extend .red-text;
+    }
+
+    .close {
+      position: absolute;
+      top: 50%;
+      right: 0.5rem;
+      color: inherit;
+      margin-top: -18px;
+    }
+
+    i {
+      margin-right: 5px;
+      vertical-align: sub;
+    }
+  }
+  
+  app-root main app-book app-viewer .app-viewer-wrapper & {
+    position: absolute;
+    width: 100%;
+  }
+}
