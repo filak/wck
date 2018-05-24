@@ -25,4 +25,11 @@ export class PdfViewerComponent implements  OnInit {
     this.bookService.bookState = BookState.Success;
   }
 
+  zoom: number = 1.0;
+  //originalSize: boolean = true;
+
+  changeZoom(amount: number) {
+      this.zoom += amount;
+      }
+
 }

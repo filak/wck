@@ -75,10 +75,17 @@ export class MetadataComponent implements OnInit {
     } else {
       url = 'view/' + uuid;
     }
-
     return url;
   }
 
 
+  private getLocalLink(localid) {
+
+    let url: string;
+    if (this.appSettings.local_url) {
+      url = this.appSettings.local_url.replace(/\$\{ID\}/, localid);
+      return url;
+    }
+  }
 
 }

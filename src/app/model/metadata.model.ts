@@ -5,6 +5,7 @@ import { PeriodicalItem } from './periodicalItem.model';
 export class Metadata {
 
     public uuid: string;
+    public identif_local: string;
     public titles: TitleInfo[] = [];
     public authors: Author[] = [];
     public publishers: Publisher[] = [];

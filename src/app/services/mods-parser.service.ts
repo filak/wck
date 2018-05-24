@@ -9,7 +9,6 @@ import { parseString, processors, Builder } from 'xml2js';
 export class ModsParserService {
 
     parse(mods, uuid: string): Metadata {
-        // const xml = mods.replace(/xmlns.*=".*"/g, '');
         const data = {tagNameProcessors: [processors.stripPrefix], explicitCharkey: true};
         const ctx = this;
         let metadata: Metadata;
@@ -23,6 +22,7 @@ export class ModsParserService {
         const metadata = new Metadata();
         metadata.uuid = uuid;
         const root = mods['modsCollection']['mods'][0];
+        metadata.identif_local = this.processIdentifiers(root['identifier'], metadata);
         this.processTitles(root['titleInfo'], metadata);
         this.processAuthors(root['name'], metadata);
         this.processPublishers(root['originInfo'], metadata);
@@ -34,6 +34,19 @@ export class ModsParserService {
         this.processSimpleArray(root['abstract'], metadata.abstracts, null);
         this.processSimpleArray(root['genre'], metadata.genres, { key: 'authority', value: 'czenas' });
         return metadata;
+    }
+
+
+    private processIdentifiers(array, metadata: Metadata) {
+        if (!array) {
+            return;
+        }
+        for (const item of array) {
+
+            if (item.$.type === 'local') {
+                return this.getText(item);
+            }
+        }
     }
 
     private processTitles(array, metadata: Metadata) {

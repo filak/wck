@@ -21,6 +21,7 @@ export class AppSettings {
   public imageViewer = APP_GLOBAL.imageViewer;
   public imageRawSize = APP_GLOBAL.imageRawSize;
   public generatePdfMaxRange = APP_GLOBAL.generatePdfMaxRange;
+  public local_url = APP_GLOBAL.local_url;
 
 }
 

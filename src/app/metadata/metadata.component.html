@@ -1,6 +1,17 @@
 <div class="app-metadata-wrapper" *ngIf="metadata">
 
   <div class="app-metadata-controls" *ngIf="controlsEnabled">
+
+        <a *ngIf="metadata.identif_local" href="{{getLocalLink(metadata.identif_local)}}" target="_blank">
+        <i class="app-mdi-book-source"
+            mz-tooltip [tooltip]="'book_controls.tooltip_source' | translate" [position]="'bottom'"></i>
+        </a>
+
+        <a *ngIf="metadata.article && metadata.article.metadata" href="{{getLocalLink(metadata.article.metadata.identif_local)}}" target="_blank">
+        <i class="app-mdi-book-article"
+            mz-tooltip [tooltip]="'book_controls.tooltip_article' | translate" [position]="'bottom'"></i>
+        </a>
+
         <i class="app-mdi-book-share app-cursor-pointer" (click)="onShare()"
             mz-tooltip [tooltip]="'book_controls.tooltip_share' | translate" [position]="'bottom'"></i>
   </div>

@@ -10,6 +10,7 @@ var APP_GLOBAL = {
   generatePdfMaxRange: 30,
   ga: 'UA-...',
   share_url: 'http://kramerius-dev.nlk/uuid/${UUID}',
+  local_url: 'https://www.medvik.cz/link/${ID}',
   doctypes: ['monograph','periodical','article'],
   enablePeriodicalVolumesYearsLayout: true, 
   enablePeriodicalIsssuesCalendarLayout: true,
