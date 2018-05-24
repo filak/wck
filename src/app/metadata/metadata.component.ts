@@ -67,4 +67,18 @@ export class MetadataComponent implements OnInit {
   }
 
 
+  private getDocumentLink(uuid, doctype) {
+
+    let url: string;
+    if (doctype === 'periodical' ) {
+      url = 'periodical/' + uuid;
+    } else {
+      url = 'view/' + uuid;
+    }
+
+    return url;
+  }
+
+
+
 }

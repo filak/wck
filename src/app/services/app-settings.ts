@@ -18,6 +18,9 @@ export class AppSettings {
   public defaultPeriodicalIsssuesLayout = APP_GLOBAL.defaultPeriodicalIssuesLayout;
 
   public lowerPidPath = APP_GLOBAL.lowerPidPath;
+  public imageViewer = APP_GLOBAL.imageViewer;
+  public imageRawSize = APP_GLOBAL.imageRawSize;
+  public generatePdfMaxRange = APP_GLOBAL.generatePdfMaxRange;
 
 }
 

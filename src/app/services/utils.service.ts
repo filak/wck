@@ -42,9 +42,26 @@ export class Utils {
             item.volumeNumber = json['details']['volumeNumber'];
             item.volumeYear = json['details']['year'];
         }
-        if (json['pdf'] && json['pdf']['url']) {
+
+        var raw = true;
+
+        if (json.hasOwnProperty('pdf')) {
             item.pdf = true;
+            item.pdf_url = json['pdf']['url'];
+            raw = false;
         }
+
+        if (json.hasOwnProperty('zoom')) {
+            item.zoom_url = json['zoom']['url'];
+            raw = false;
+        }
+
+        if (json.hasOwnProperty('iiif')) {
+            item.iiif_url = json['iiif'];
+            raw = false;
+        }
+
+        item.raw_img = raw;
 
         item.resolveUrl();
         return item;

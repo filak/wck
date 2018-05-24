@@ -176,8 +176,16 @@ export class KrameriusApiService {
 
     getPeriodicalFulltextPages(periodicalUuid: string, volumeUuid: string, offset: number, limit: number, query: PeriodicalQuery) {
         let url = this.API_URL + '/search?fl=PID,root_pid,pid_path,dostupnost,dc.title,parent_pid&q=';
+
+        if (this.LPID_PATH) {
+            var ppath = periodicalUuid.toLowerCase();
+        } else {
+            var ppath = periodicalUuid;
+        }
+
+
         if (volumeUuid) {
-            url += 'pid_path:' + this.utils.escapeUuid(periodicalUuid) + '/' + this.utils.escapeUuid(volumeUuid)  + '/*';
+            url += 'pid_path:' + this.utils.escapeUuid(ppath) + '/' + this.utils.escapeUuid(volumeUuid)  + '/*';
         } else {
             url += 'root_pid:"' + periodicalUuid + '"';
         }
@@ -327,11 +335,6 @@ export class KrameriusApiService {
             .map(response => response['_body'])
             .catch(this.handleError);
     }
-
-
-
-
-
 
 
 }

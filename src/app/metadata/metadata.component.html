@@ -7,17 +7,19 @@
 
   <div class="app-metadata-content">
 
-    <div *ngIf="metadata.getTitle()"> 
+    <div *ngIf="metadata.getTitle()">
+     
+      <a href="{{getDocumentLink(metadata.uuid, metadata.doctype)}}">
       <h5 [class.app-cut]="metadata.getTitle().length > 75 && showingTitle == false">
         {{metadata.getTitle()}}
       </h5>
+      </a>
+
       <i *ngIf="metadata.getTitle().length > 75 && showingTitle == false" mz-icon-mdi [icon]="'more'" [size]="'20'" (click)="showTitle()" mz-tooltip [tooltip]="'common.show_whole_title' | translate" [position]="'top'" class="app-more app-cursor-pointer"></i>
       <i *ngIf="metadata.getTitle().length > 75 && showingTitle == true" mz-icon-mdi [icon]="'more'" [size]="'20'" (click)="showTitle()" mz-tooltip [tooltip]="'common.hide_whole_title' | translate" [position]="'top'" class="app-more app-cursor-pointer"></i>
     </div>
     <div class="app-subtitle" *ngIf="metadata.titles.length > 0">{{metadata.titles[0].subTitle}}</div>
     
-    
-
     <div *ngIf="metadata.currentUnit">
       <a [routerLink]="['/periodical', metadata.uuid]">
         {{ 'metadata.unit_list' | translate }}
@@ -89,13 +91,6 @@
 
       <div class="divider"></div>
     </div>
-
-
-
-
-
-
-
 
     <div *ngIf="metadata.article && metadata.article.metadata" >
       <label>Článek</label>

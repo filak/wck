@@ -21,8 +21,10 @@ import { DialogOcrComponent } from '../dialog/dialog-ocr/dialog-ocr.component';
 import { request } from 'https';
 import 'rxjs/add/observable/forkJoin';
 import { Article } from '../model/article.model';
+import { InternalPart } from '../model/internalpart.model';
 import { HistoryService } from './history.service';
 import { SimpleDialogComponent } from '../dialog/simple-dialog/simple-dialog.component';
+import { AppSettings } from './app-settings';
 
 
 
@@ -56,9 +58,14 @@ export class BookService {
     public articles: Article[];
     public article: Article;
 
+    public intparts: InternalPart[];
+    public intpart: InternalPart;
 
+    private IMG_VIEWER: string;
+    private IMG_RAW_SIZE: number;
+    private MAX_PAGE_CNT: number;
 
-    public activeNavigationTab: string; // pages | articles
+    public activeNavigationTab: string; // pages | articles | intparts
     public showNavigationTabs: boolean;
     public showNavigationPanel: boolean;
     public viewer: string; // image | pdf | none
@@ -71,7 +78,12 @@ export class BookService {
         private solrService: SolrService,
         private history: HistoryService,
         private router: Router,
-        private modalService: MzModalService) {
+        private modalService: MzModalService,
+        private appSettings: AppSettings,) {
+
+        this.IMG_VIEWER = appSettings.imageViewer;
+        this.IMG_RAW_SIZE = appSettings.imageRawSize;
+        this.MAX_PAGE_CNT = appSettings.generatePdfMaxRange;
     }
 
     init(uuid: string, pageUuid: string, articleUuid: string, fulltext: string) {
@@ -86,6 +98,13 @@ export class BookService {
                     const page = this.history.pop();
                     this.router.navigate(['/view', issueUuid], { queryParams: { article: uuid, fulltext: this.fulltextQuery } });
                     return;
+                } else {
+                    const volUuid = item.getUuidFromContext('periodicalvolume');
+                    if (volUuid) {
+                        const page = this.history.pop();
+                        this.router.navigate(['/view', volUuid], { queryParams: { article: uuid, fulltext: this.fulltextQuery } });
+                        return;
+                    }
                 }
             }
             this.isPrivate = !item.public;
@@ -219,7 +238,7 @@ export class BookService {
             return;
         }
         this.showNavigationPanel = true;
-        if (this.pages.length > 0 && this.articles.length > 0) {
+        if (this.pages.length > 0 && this.articles.length > 0 ) {
             this.showNavigationTabs = true;
         }
         if (articleUuid || (!pageUuid && this.pages.length === 0)) {
@@ -526,7 +545,7 @@ export class BookService {
                 pageCount: this.getPageCount(),
                 currentPage: this.getPage().index,
                 doublePage: this.doublePage,
-                maxPageCount: 150,
+                maxPageCount: this.MAX_PAGE_CNT,
                 uuids: this.uuids(),
                 type: type
             });
@@ -592,7 +611,7 @@ export class BookService {
         }
         if (!cached) {
             this.publishNewPages(BookPageState.Loading);
-            this.fetchImageProperties(page, rightPage, true);
+            this.fetchItemProperties(page, rightPage, true);
         } else {
             this.publishNewPages(BookPageState.Success);
         }
@@ -698,44 +717,71 @@ export class BookService {
     }
 
 
-    private fetchImageProperties(leftPage: Page, rightPage: Page, first: boolean) {
+    private fetchItemProperties(leftPage: Page, rightPage: Page, first: boolean) {
+
         const page = first ? leftPage : rightPage;
+
+        this.krameriusApiService.getItem(page.uuid).subscribe((item: DocumentItem) => {
+
+            console.log(item);
+
+            if (item.pdf) {
+                this.viewer = 'pdf';
+                const purl = this.krameriusApiService.getPdfUrl(page.uuid);
+                this.pdf = purl;
+                this.publishNewPages(BookPageState.Success);
+
+            } else {
+                if (item.raw_img) {
+                    this.fetchImageRaw(page);
+                } else {
+                    this.fetchImageProperties(page);
+                }
+
+                if (first && rightPage) {
+                    this.fetchItemProperties(leftPage, rightPage, false);
+                }
+            }
+          }
+        );
+    }
+
+
+    private fetchImageRaw(page) {
+
+        // Not zoomify
+        const jepgUrl = this.krameriusApiService.getScaledJpegUrl(page.uuid, this.IMG_RAW_SIZE);
+        const image = new Image();
+        const subject = this.subject;
+        image.onload = (() => {
+            page.setImageProperties(image.width, image.height, jepgUrl, false);
+            this.publishNewPages(BookPageState.Success);
+        });
+        image.onerror = (() => {
+            // JPEG failure
+            image.onerror = null;
+            this.publishNewPages(BookPageState.Failure);
+        });
+        image.src = jepgUrl;
+    }
+
+
+    private fetchImageProperties(page) {
+
         const url = this.krameriusApiService.getZoomifyRootUrl(page.uuid);
+
         this.krameriusApiService.getZoomifyProperties(page.uuid).subscribe(
             response => {
                 const a = response.toLowerCase().split('"');
                 const width = parseInt(a[1], 10);
                 const height = parseInt(a[3], 10);
                 page.setImageProperties(width, height, url, true);
-                if (first && rightPage) {
-                    this.fetchImageProperties(leftPage, rightPage, false);
-                } else {
-                    this.publishNewPages(BookPageState.Success);
-                }
+                this.publishNewPages(BookPageState.Success);
             },
             (error: AppError)  => {
                 if (error instanceof UnauthorizedError) {
                     // Private document
                     this.publishNewPages(BookPageState.Inaccessible);
-                } else if (error instanceof NotFoundError) {
-                    // Not zoomify
-                    const jepgUrl = this.krameriusApiService.getScaledJpegUrl(page.uuid, 2000);
-                    const image = new Image();
-                    const subject = this.subject;
-                    image.onload = (() => {
-                        page.setImageProperties(image.width, image.height, jepgUrl, false);
-                        if (first && rightPage) {
-                            this.fetchImageProperties(leftPage, rightPage, false);
-                        } else {
-                            this.publishNewPages(BookPageState.Success);
-                        }
-                    });
-                    image.onerror = (() => {
-                        // JPEG failure
-                        image.onerror = null;
-                        this.publishNewPages(BookPageState.Failure);
-                    });
-                    image.src = jepgUrl;
                 } else {
                     // Zoomify failure
                     this.publishNewPages(BookPageState.Failure);

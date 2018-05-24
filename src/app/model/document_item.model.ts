@@ -7,9 +7,13 @@ export class DocumentItem {
     root_uuid: string;
     public: boolean;
     url: string;
+    pdf_url: string;
+    zoom_url: string;
+    iiif_url: string;
     volumeNumber: string;
     volumeYear: string;
     pdf = false;
+    raw_img = false;
     hits: number;
     context: Context[] = [];
     params;
