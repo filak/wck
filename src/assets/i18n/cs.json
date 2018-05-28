@@ -197,6 +197,8 @@
     "tooltip_ocr": "Textový přepis stránky",
     "tooltip_quote": "Zobrazit citaci",
     "tooltip_share": "Sdílet",
+    "tooltip_source": "Zobrazit zdroj",
+    "tooltip_article": "Záznam článku",
     "all_pages": "Všechny stránky"
   },
   "book_toolbar": {

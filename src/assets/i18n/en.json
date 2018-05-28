@@ -199,8 +199,10 @@
     "tooltip_pdf": "Generate PDF",
     "tooltip_jpg": "JPEG of the page",
     "tooltip_ocr": "Text transcript of the page",
-    "tooltip_quote": "show quotation",
+    "tooltip_quote": "Show quotation",
     "tooltip_share": "Share",
+    "tooltip_source": "Show source",
+    "tooltip_article": "Show article record",
     "all_pages": "All Pages"
    
   },
