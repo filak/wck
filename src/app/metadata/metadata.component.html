@@ -70,9 +70,11 @@
           {{ 'metadata.issue_list' | translate }}
         </a>
       </div>
+      <!--
       <div *ngIf="metadata.volumeMetadata" >
         <app-metadata [metadata]="metadata.volumeMetadata" class="app-nested" [showControls]="false"></app-metadata>
       </div>
+      -->
       <div class="divider"></div>
     </div>
 
@@ -215,7 +217,7 @@
 
   <div *ngIf="metadata.review && metadata.review.metadata" >
     <label>{{ 'metadata.review_of' | translate }}</label>
-    <app-metadata [metadata]="metadata.review" class="app-nested" [showControls]="false"></app-metadata>
+    <app-metadata [metadata]="metadata.review.metadata" class="app-nested" [showControls]="false"></app-metadata>
   </div>
 
 
