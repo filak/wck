@@ -1,8 +1,12 @@
 import { Article } from './article.model';
 import { DocumentItem } from './document_item.model';
 import { PeriodicalItem } from './periodicalItem.model';
+import beautify from 'xml-beautifier';
 
 export class Metadata {
+
+
+    public modsMap = {};
 
     public uuid: string;
     public identif_local: string;
@@ -16,6 +20,8 @@ export class Metadata {
     public locations: Location[] = [];
     public abstracts: string[] = [];
     public genres: string[] = [];
+    public contents: string[] = [];
+    public physicalDescriptions: PhysicalDescription[] = [];
 
     public model: string;
     public doctype: string;
@@ -30,16 +36,17 @@ export class Metadata {
     public previousUnit: PeriodicalItem;
 
     public article: Article;
+    public review: Metadata;
+    public volumeMetadata: Metadata;
+
+    public mainTitle: string;
 
     constructor() {
     }
 
-    public getTitle(): string {
-        if (this.titles && this.titles.length > 0) {
-            return this.titles[0].title;
-        } else {
-            return '';
-        }
+
+    public addMods(doctype: string, mods: string) {
+        this.modsMap[doctype] = beautify(mods);
     }
 
     public getYearRange() {
@@ -76,12 +83,37 @@ export class Metadata {
     public assignVolume(item: DocumentItem) {
         this.volume = new Volume(item.uuid, item.volumeYear, item.volumeNumber);
     }
+
+
+    public getTitle(): string {
+        if (this.mainTitle) {
+            return this.mainTitle;
+        }
+        if (this.titles.length > 0) {
+            this.mainTitle = this.titles[0].maintTitle();
+            return this.mainTitle;
+        }
+        return '';
+    }
+
+
 }
 
 
 export class TitleInfo {
+    public nonSort;
     public title;
     public subTitle;
+    public partName;
+    public partNumber;
+
+    maintTitle(): string {
+        if (this.nonSort) {
+            return this.nonSort + ' ' + this.title;
+        } else {
+            return this.title;
+        }
+    }
 }
 
 export class Volume {
@@ -103,6 +135,14 @@ export class Location {
     }
 }
 
+
+export class PhysicalDescription {
+    public extent;
+    public note;
+    empty() {
+        return !(this.extent || this. note);
+    }
+}
 
 export class Publisher {
     public name;

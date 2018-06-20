@@ -225,10 +225,7 @@ export class SolrService {
         for (const doctype of doctypes) {
             map[doctype] = 0;
         }
-        const list = [];
-
-        // TODO
-        // facetFields = [];
+        
 
         var params = solr['responseHeader']['params']['group'];
 
@@ -238,6 +235,7 @@ export class SolrService {
             var facetFlds = solr['facet_counts']['facet_fields']['fedora.model'];
         }
 
+        const list = [];
         const facetFields = facetFlds;
 
         for (let i = 0; i < facetFields.length; i += 2) {

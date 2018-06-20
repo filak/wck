@@ -1,6 +1,4 @@
-import { element } from 'protractor';
-import { Metadata, TitleInfo, Author, Publisher, Location } from './../model/metadata.model';
-import { Page } from './../model/page.model';
+import { Metadata, TitleInfo, Author, Publisher, Location, PhysicalDescription } from './../model/metadata.model';
 import { Injectable } from '@angular/core';
 import { parseString, processors, Builder } from 'xml2js';
 
@@ -8,12 +6,16 @@ import { parseString, processors, Builder } from 'xml2js';
 @Injectable()
 export class ModsParserService {
 
-    parse(mods, uuid: string): Metadata {
+    parse(mods, uuid: string, type: string = 'full'): Metadata {
         const data = {tagNameProcessors: [processors.stripPrefix], explicitCharkey: true};
         const ctx = this;
         let metadata: Metadata;
         parseString(mods, data, function (err, result) {
-            metadata = ctx.createMetadata(result, uuid);
+            if (type === 'full') {
+                metadata = ctx.createMetadata(result, uuid);
+            } else {
+                metadata = ctx.createPlainMetadata(result, uuid);
+            }
         });
         return metadata;
     }
@@ -29,25 +31,53 @@ export class ModsParserService {
         this.processLocations(root['location'], metadata);
         this.processSubjects(root['subject'], metadata);
         this.processLanguages(root['language'], metadata);
-
+        this.processReview(root, metadata);
+        this.processPhysicalDescriptions(root['physicalDescription'], metadata);
         this.processSimpleArray(root['note'], metadata.notes, null);
+        this.processSimpleArray(root['tableOfContents'], metadata.contents, null);
         this.processSimpleArray(root['abstract'], metadata.abstracts, null);
         this.processSimpleArray(root['genre'], metadata.genres, { key: 'authority', value: 'czenas' });
         return metadata;
     }
 
-
-    private processIdentifiers(array, metadata: Metadata) {
-        if (!array) {
-            return;
-        }
-        for (const item of array) {
-
-            if (item.$.type === 'local') {
-                return this.getText(item);
+    private createPlainMetadata(mods, uuid: string): Metadata {
+        const metadata = new Metadata();
+        metadata.uuid = uuid;
+        const root = mods['modsCollection']['mods'][0];
+        this.processAuthors(root['name'], metadata);
+        this.processLocations(root['location'], metadata);
+        this.processSubjects(root['subject'], metadata);
+        this.processLanguages(root['language'], metadata);
+        this.processPhysicalDescriptions(root['physicalDescription'], metadata);
+        this.processSimpleArray(root['note'], metadata.notes, null);
+        this.processSimpleArray(root['tableOfContents'], metadata.contents, null);
+        this.processSimpleArray(root['abstract'], metadata.abstracts, null);
+        this.processSimpleArray(root['genre'], metadata.genres, { key: 'authority', value: 'czenas' });
+        if (root['titleInfo'] && root['titleInfo'].length > 0) {
+            const title = this.getText(root['titleInfo'][0]['partName']);
+            if (title) {
+                const titleInfo = new TitleInfo();
+                titleInfo.title = title;
+                metadata.titles.push(titleInfo);
             }
         }
+        if (metadata.titles.length > 0 ||
+            metadata.authors.length > 0 ||
+            metadata.locations.length > 0 ||
+            metadata.keywords.length > 0 ||
+            metadata.languages.length > 0 ||
+            metadata.physicalDescriptions.length > 0 ||
+            metadata.notes.length > 0 ||
+            metadata.contents.length > 0 ||
+            metadata.abstracts.length > 0 ||
+            metadata.genres.length > 0) {
+                return metadata;
+        }
+        return null;
     }
+
+
+
 
     private processTitles(array, metadata: Metadata) {
         if (!array) {
@@ -55,8 +85,11 @@ export class ModsParserService {
         }
         for (const item of array) {
             const titleInfo = new TitleInfo();
+            titleInfo.nonSort = this.getText(item.nonSort);
             titleInfo.title = this.getText(item.title);
             titleInfo.subTitle = this.getText(item.subTitle);
+            titleInfo.partNumber = this.getText(item.partNumber);
+            titleInfo.partName = this.getText(item.partName);
             metadata.titles.push(titleInfo);
         }
     }
@@ -98,6 +131,38 @@ export class ModsParserService {
         }
     }
 
+
+    private processReview(mods, metadata: Metadata) {
+        let hasReview = false;
+        if (!mods['genre']) {
+            return;
+        }
+        for (const genre of mods['genre']) {
+            if (this.hasAttribute(genre, 'type', 'review')) {
+                hasReview = true;
+                break;
+            }
+        }
+        if (!hasReview) {
+            return;
+        }
+        const ris = mods['relatedItem'];
+        if (!ris || ris.length === 0) {
+            return;
+        }
+        const ri = ris[0];
+        const review = new Metadata();
+        this.processTitles(ri['titleInfo'], review);
+        this.processAuthors(ri['name'], review);
+        this.processPublishers(ri['originInfo'], review);
+        this.processLocations(ri['location'], review);
+        this.processSubjects(ri['subject'], review);
+        this.processLanguages(ri['language'], review);
+        this.processSimpleArray(ri['note'], review.notes, null);
+        this.processSimpleArray(ri['abstract'], review.abstracts, null);
+        this.processSimpleArray(ri['genre'], review.genres, { key: 'authority', value: 'czenas' });
+        metadata.review = review;
+    }
 
 
     private processPublishers(array, metadata: Metadata) {
@@ -142,6 +207,21 @@ export class ModsParserService {
             location.shelfLocator = this.getText(item.shelfLocator);
             if (!location.empty()) {
                 metadata.locations.push(location);
+            }
+        }
+    }
+
+
+    private processPhysicalDescriptions(array, metadata: Metadata) {
+        if (!array) {
+            return;
+        }
+        for (const item of array) {
+            const desc = new PhysicalDescription();
+            desc.extent = this.getText(item.extent);
+            desc.note = this.getText(item.note);
+            if (!desc.empty()) {
+                metadata.physicalDescriptions.push(desc);
             }
         }
     }
@@ -197,13 +277,15 @@ export class ModsParserService {
 
     private getText(element) {
         if (element) {
+            let el = '';
             if (Array.isArray(element)) {
-                return element[0]['_'];
+                el = element[0]['_'];
             } else {
-                return element['_'];
+                el = element['_'];
             }
-        } else {
-            return null;
+            if (el) {
+                return el.trim();
+            }
         }
     }
 
@@ -214,6 +296,18 @@ export class ModsParserService {
             return true;
         }
         return false;
+    }
+
+    private processIdentifiers(array, metadata: Metadata) {
+        if (!array) {
+            return;
+        }
+        for (const item of array) {
+
+            if (item.$.type === 'local') {
+                return this.getText(item);
+            }
+        }
     }
 
 

@@ -8,7 +8,6 @@ import { DialogPdfComponent } from './../dialog/dialog-pdf/dialog-pdf.component'
 import { NotFoundError } from './../common/errors/not-found-error';
 import { UnauthorizedError } from './../common/errors/unauthorized-error';
 import { AppError } from './../common/errors/app-error';
-import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { KrameriusApiService } from './kramerius-api.service';
@@ -16,9 +15,8 @@ import { Page, PagePosition } from './../model/page.model';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { MzModalService } from 'ng2-materialize';
+import { MzModalService } from 'ngx-materialize';
 import { DialogOcrComponent } from '../dialog/dialog-ocr/dialog-ocr.component';
-import { request } from 'https';
 import 'rxjs/add/observable/forkJoin';
 import { Article } from '../model/article.model';
 import { InternalPart } from '../model/internalpart.model';
@@ -125,8 +123,16 @@ export class BookService {
                 this.metadata = this.modsParserService.parse(response, item.root_uuid);
                 const page = this.getPage();
                 this.metadata.model = item.doctype;
-                this.metadata.model = item.doctype;
-                this.metadata.doctype = (item.doctype && item.doctype.startsWith('periodical')) ? 'periodical' : item.doctype;
+                if (item.doctype) {
+                    if (item.doctype.startsWith('periodical')) {
+                        this.metadata.doctype = 'periodical';
+                    } else if (item.doctype === 'monographunit') {
+                        this.metadata.doctype = 'monographbundle';
+                    } else {
+                        this.metadata.doctype = item.doctype;
+                    }
+                }
+                this.metadata.addMods(this.metadata.doctype, response);
                 if (item.doctype === 'periodicalitem') {
                     const volumeUuid = item.getUuidFromContext('periodicalvolume');
                     this.loadVolume(volumeUuid);
@@ -143,6 +149,11 @@ export class BookService {
     private loadVolume(uuid: string) {
         this.krameriusApiService.getItem(uuid).subscribe((item: DocumentItem) => {
             this.metadata.assignVolume(item);
+        });
+        this.krameriusApiService.getMods(uuid).subscribe(mods => {
+            this.metadata.addMods('periodicalvolume', mods);
+            const metadata = this.modsParserService.parse(mods, uuid, 'volume');
+            this.metadata.volumeMetadata = metadata;
         });
     }
 
@@ -170,6 +181,11 @@ export class BookService {
             if (index < issues.length - 1) {
             this.metadata.nextIssue = issues[index + 1];
             }
+            this.krameriusApiService.getMods(issueUuid).subscribe(mods => {
+                this.metadata.addMods('periodicalitem', mods);
+                const metadata = this.modsParserService.parse(mods, issueUuid, 'issue');
+                this.metadata.currentIssue.metadata = metadata;
+            });
         });
     }
 
@@ -196,6 +212,11 @@ export class BookService {
             if (index < units.length - 1) {
                 this.metadata.nextUnit = units[index + 1];
             }
+            this.krameriusApiService.getMods(unitUud).subscribe(mods => {
+                this.metadata.addMods('monographunit', mods);
+                const metadata = this.modsParserService.parse(mods, unitUud);
+                this.metadata.currentUnit.metadata = metadata;
+            });
         });
     }
 
@@ -238,7 +259,7 @@ export class BookService {
             return;
         }
         this.showNavigationPanel = true;
-        if (this.pages.length > 0 && this.articles.length > 0 ) {
+        if (this.pages.length > 0 && this.articles.length > 0) {
             this.showNavigationTabs = true;
         }
         if (articleUuid || (!pageUuid && this.pages.length === 0)) {
@@ -396,6 +417,7 @@ export class BookService {
     getPageIndex(): number {
         return this.activePageIndex;
     }
+
 
     getPageCount(): number {
         return this.pages ? this.pages.length : 0;
@@ -658,6 +680,7 @@ export class BookService {
         this.location.go('/view/' + this.uuid, urlQuery);
         if (article.type === 'none') {
             Observable.forkJoin([this.krameriusApiService.getItem(article.uuid), this.krameriusApiService.getMods(article.uuid)]).subscribe(([item, mods]: [DocumentItem, any]) => {
+                this.metadata.addMods('article', mods);
                 article.type = item.pdf ? 'pdf' : 'pages';
                 this.onArticleLoaded(article);
                 const articleMetadata = this.modsParserService.parse(mods, article.uuid);
