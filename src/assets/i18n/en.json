@@ -143,11 +143,12 @@
     "notes": "Notes",
     "genres": "Genre", 
     "article": "Article",
+    "intpart": "Part",
     "review_of": "Review of",
     "volume": "Volume",
     "volume_year": "Year of publication",
     "issue": "Issue",
-    "unit": "Part",
+    "unit": "Vol",
     "page": "Page",
     "volume_list": "Volume list",
     "issue_date": "Date of publication",
@@ -155,9 +156,9 @@
     "issue_list": "Issue list",
     "next_issue": "Next issue: ",
     "unit_number": "Number",
-    "unit_list": "Part list",
-    "next_unit": "Next part: ",
-    "previous_unit": "Previous part: ",
+    "unit_list": "Vol list",
+    "next_unit": "Next vol: ",
+    "previous_unit": "Previous vol: ",
     "shelf_locator": "Shelf number: {{shelf_locator}}",
     "btn_show_metadata": "Show metadata",
     "btn_hide_metadata": "Hide metadata"
@@ -165,7 +166,7 @@
   "periodical": {
     "volume": "Volume {{volume}}",
     "issue": "Issue {{issue}}",
-    "unit": "Unit {{unit}}",
+    "unit": "Vol {{unit}}",
     "supplement": "Supplement {{supplement}}",
     "virtual_issue": "Uncategorized",
     "volume_unknown": "-",
@@ -265,7 +266,8 @@
     "page" : "Page",
     "supplement" : "Supplement",
     "article" : "Article",
-    "internalpart" : "Internal Part",
+    "internalpart" : "Part",
+    "intpart" : "Part",
     "soundunit" : "Sound Unit",
     "track" : "Track"
   },
@@ -284,7 +286,7 @@
     "page" : "Pages",
     "supplement" : "Supplements",
     "article" : "Articles",
-    "internalpart" : "Internal Parts",
+    "internalpart" : "Parts",
     "soundunit" : "Sound Units",
     "track" : "Tracks"
   },
@@ -297,9 +299,15 @@
     "spine": "Spine",
     "titlepage": "Title",
     "tableofcontents": "ToC",
-    "listofillustrations": "Index of ill.",
+    "listofillustrations": "Ill.",
     "backendsheet": "Back sheet",
-    "backcover": "Back cover"
+    "backcover": "Back cover",
+    "cover": "Cover",
+    "advertisement": "Adv.",
+    "flyleaf": "Flyleaf",
+    "index": "Index",
+    "jacket": "Jacket",
+    "listoftables": "Tables"
   },
   "calendar" : {
     "months" : {

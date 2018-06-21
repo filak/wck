@@ -10,7 +10,7 @@ export class DialogMetadataComponent extends MzBaseModal implements OnInit {
   doctypes = ['periodical', 'monographbundle', 'monograph', 'map', 'sheetmusic', 'graphic',
               'archive', 'soundrecording', 'manuscript', 'monographunit',
               'soundunit', 'track', 'periodicalvolume', 'periodicalitem',
-              'article', 'internalpart', 'supplement', 'page'];
+              'article', 'internalpart', 'intpart', 'supplement', 'page'];
   data = [];
   selection;
 

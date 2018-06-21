@@ -4,6 +4,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { DialogShareComponent } from '../dialog/dialog-share/dialog-share.component';
 import { MzModalService } from 'ngx-materialize';
 import { DialogMetadataComponent } from '../dialog/dialog-metadata/dialog-metadata.component';
+import { BookService } from './../services/book.service';
 
 @Component({
   selector: 'app-metadata',
@@ -17,7 +18,7 @@ export class MetadataComponent implements OnInit {
   @Input() metadata: Metadata;
   showingTitle = false;
 
-  constructor(private modalService: MzModalService, private appSettings: AppSettings) { }
+  constructor(private modalService: MzModalService, private appSettings: AppSettings, private bookService: BookService) { }
 
   ngOnInit() {
   }
@@ -27,7 +28,7 @@ export class MetadataComponent implements OnInit {
   }
 
   showModsDialog() {
-    this.modalService.open(DialogMetadataComponent, { map: this.metadata.modsMap} );
+    this.modalService.open(DialogMetadataComponent, {map: this.metadata.modsMap} );
 
   }
 

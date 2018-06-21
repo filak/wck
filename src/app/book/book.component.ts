@@ -41,8 +41,9 @@ export class BookComponent implements OnInit, OnDestroy {
         if (uuid) {
           const page = q.get('page');
           const article = q.get('article');
+          const intpart = q.get('intpart');
           const fulltext = q.get('fulltext');
-          this.bookService.init(uuid, page, article, fulltext);
+          this.bookService.init(uuid, page, article, intpart, fulltext);
         }
     });
   }

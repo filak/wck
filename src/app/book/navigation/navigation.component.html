@@ -4,15 +4,24 @@
   <ul class="tabs">
     <li class="tab">
       <a (click)="bookService.changeNavigationTab('pages')" [class.active]="bookService.activeNavigationTab === 'pages'">
-        <span class="app-desc">Stránky</span>
+        <span class="app-desc">{{ 'model_plural.page' | translate }}</span>
       </a>
     </li> 
-    <li class="tab">
+    <li class="tab" *ngIf="bookService.showNavigationTabsIntparts">
+      <a (click)="bookService.changeNavigationTab('intparts')" [class.active]="bookService.activeNavigationTab === 'intparts'">
+        <span class="app-desc">{{ 'model_plural.internalpart' | translate }}</span>
+      </a>
+    </li>
+    <li class="tab" *ngIf="bookService.showNavigationTabsArticles">
       <a (click)="bookService.changeNavigationTab('articles')" [class.active]="bookService.activeNavigationTab === 'articles'">
-        <span class="app-desc">Články</span>
+        <span class="app-desc">{{ 'model_plural.article' | translate }}</span>
       </a>
     </li>
   </ul>
+</div>
+
+<div class="app-navigation-intparts" *ngIf="bookService.activeNavigationTab === 'intparts'">
+  <div *ngFor="let intpart of bookService.intparts" (click)="bookService.onIntpartSelected(intpart)" class="app-intpart" [class.app-intpart-selected]="intpart === bookService.intpart">{{ intpart.title }}</div>
 </div>
 
 <div class="app-navigation-articles" *ngIf="bookService.activeNavigationTab === 'articles'">
