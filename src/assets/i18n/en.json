@@ -204,12 +204,13 @@
     "tooltip_print": "Prepare to print",
     "tooltip_pdf": "Generate PDF",
     "tooltip_jpg": "JPEG of the page",
-    "tooltip_ocr": "Text transcript of the page",
+    "tooltip_ocr": "Text of the page",
     "tooltip_quote": "Show quotation",
     "tooltip_share": "Share",
     "tooltip_metadata": "Metadata",
     "tooltip_source": "Show source",
-    "tooltip_article": "Show article record",
+    "tooltip_article": "Show article",
+    "tooltip_part": "Show part",
     "all_pages": "All Pages"
    
   },

@@ -7,7 +7,14 @@
             mz-tooltip [tooltip]="'book_controls.tooltip_source' | translate" [position]="'bottom'"></i>
         </a>
 
-        <a *ngIf="metadata.article && metadata.article.metadata" href="{{getLocalLink(metadata.article.metadata.identif_local)}}" target="_blank">
+        <a *ngIf="bookService.activeNavigationTab === 'intparts' && metadata.intpart && metadata.intpart.metadata.identif_local"
+            href="{{getLocalLink(metadata.intpart.metadata.identif_local)}}" target="_blank">
+        <i class="app-mdi-book-article"
+            mz-tooltip [tooltip]="'book_controls.tooltip_part' | translate" [position]="'bottom'"></i>
+        </a>
+
+        <a *ngIf="bookService.activeNavigationTab === 'articles' && metadata.article && metadata.article.metadata.identif_local"
+            href="{{getLocalLink(metadata.article.metadata.identif_local)}}" target="_blank">
         <i class="app-mdi-book-article"
             mz-tooltip [tooltip]="'book_controls.tooltip_article' | translate" [position]="'bottom'"></i>
         </a>

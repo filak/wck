@@ -200,12 +200,13 @@
     "tooltip_print": "Příprava k tisku",
     "tooltip_pdf": "Vygenerovat PDF",
     "tooltip_jpg": "JPEG stránky",
-    "tooltip_ocr": "Textový přepis stránky",
+    "tooltip_ocr": "Text stránky",
     "tooltip_quote": "Zobrazit citaci",
     "tooltip_share": "Sdílet",
     "tooltip_metadata": "Metadata",
     "tooltip_source": "Zobrazit zdroj",
-    "tooltip_article": "Záznam článku",
+    "tooltip_article": "Zobrazit článek",
+    "tooltip_part": "Zobrazit část",
     "all_pages": "Všechny stránky"
   },
   "book_toolbar": {
