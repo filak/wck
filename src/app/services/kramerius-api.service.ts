@@ -309,4 +309,16 @@ export class KrameriusApiService {
             .map(response => response['_body'])
             .catch(this.handleError);
     }
+
+    getIiifRootUrl(uuid: string): string {
+        return `${this.BASE_URL}/search/iiif/${uuid}/`;
+    }
+
+    getIiifProperties(uuid: string) {
+        const url = `${this.getIiifRootUrl(uuid)}info.json`;
+        return this.doGet(url)
+            .map(response => response.json())
+            .catch(this.handleError);
+    }
+
 }

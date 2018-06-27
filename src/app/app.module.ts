@@ -16,7 +16,7 @@ import { PaginatorComponent } from './shared/paginator/paginator.component';
 import { BrowseResultsComponent } from './browse/browse-results/browse-results.component';
 import { BrowseCountComponent } from './browse/browse-count/browse-count.component';
 import { BrowseService } from './services/browse.service';
-import { ViewerControlsService } from './services/viewre-controls.service.';
+import { ViewerControlsService } from './services/viewer-controls.service';
 import { ViewerControlsComponent } from './book/viewer/viewer-controls/viewer-controls.component';
 import { SearchService } from './services/search.service';
 import { LocalStorageService } from './services/local-storage.service';
@@ -86,12 +86,14 @@ import { MusicToolbarComponent } from './music/music-player/music-toolbar/music-
 
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { PdfViewerComponent } from './book/pdf-viewer/pdf-viewer.component';
+import { IiifViewerComponent } from './book/iiif-viewer/iiif-viewer.component';
 import { PeriodicalCountComponent } from './periodical/periodical-filters/periodical-count/periodical-count.component';
 import { PeriodicalSearchComponent } from './periodical/periodical-filters/periodical-search/periodical-search.component';
 import { PeriodicalFiltersComponent } from './periodical/periodical-filters/periodical-filters.component';
 
 import { NgxGalleryModule } from 'ngx-gallery';
 import { DialogMetadataComponent } from './dialog/dialog-metadata/dialog-metadata.component';
+
 
 import { MzButtonModule, MzInputModule, MzModalModule, MzNavbarModule, MzIconModule, MzIconMdiModule, MzTooltipModule, MzSidenavModule, MzSpinnerModule, MzBadgeModule, MzTabModule, MzCollapsibleModule, MzCollectionModule, MzCardModule, MzDropdownModule, MzCheckboxModule, MzDatepickerModule } from 'ngx-materialize';
 
@@ -164,6 +166,7 @@ const ROUTES: Routes = [
     BookToolbarComponent,
     MusicToolbarComponent,
     PdfViewerComponent,
+    IiifViewerComponent,
     PeriodicalCountComponent,
     PeriodicalSearchComponent,
     PeriodicalFiltersComponent,
@@ -231,4 +234,5 @@ const ROUTES: Routes = [
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+export class LibraryAppModule { }
 

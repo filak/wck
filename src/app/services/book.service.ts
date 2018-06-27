@@ -52,6 +52,7 @@ export class BookService {
 
     public pdf: string;
     public isPrivate: boolean;
+    public enable_pdf_url: boolean;
 
     public articles: Article[];
     public article: Article;
@@ -59,7 +60,7 @@ export class BookService {
     public intparts: InternalPart[];
     public intpart: InternalPart;
 
-    private IMG_VIEWER: string;
+    public IMG_VIEWER: string;
     private IMG_RAW_SIZE: number;
     private MAX_PAGE_CNT: number;
 
@@ -84,6 +85,7 @@ export class BookService {
         this.IMG_VIEWER = appSettings.imageViewer;
         this.IMG_RAW_SIZE = appSettings.imageRawSize;
         this.MAX_PAGE_CNT = appSettings.generatePdfMaxRange;
+        this.enable_pdf_url = appSettings.enable_pdf_url ;
     }
 
     init(uuid: string, pageUuid: string, articleUuid: string, intpartUuid: string, fulltext: string) {
@@ -858,6 +860,11 @@ export class BookService {
             } else {
                 if (item.raw_img) {
                     this.fetchImageRaw(page);
+
+                } else if (this.IMG_VIEWER === 'iiif') {
+
+                    this.fetchImagePropertiesIiif(page);
+
                 } else {
                     this.fetchImageProperties(page);
                 }
@@ -908,6 +915,30 @@ export class BookService {
                     this.publishNewPages(BookPageState.Inaccessible);
                 } else {
                     // Zoomify failure
+                    this.publishNewPages(BookPageState.Failure);
+                }
+            }
+        );
+    }
+
+
+    private fetchImagePropertiesIiif(page) {
+
+        const url = this.krameriusApiService.getIiifRootUrl(page.uuid);
+
+        this.krameriusApiService.getIiifProperties(page.uuid).subscribe(
+            response => {
+                const width = response.width;
+                const height = response.height;
+                page.setImageProperties(width, height, url, true);
+                this.publishNewPages(BookPageState.Success);
+            },
+            (error: AppError)  => {
+                if (error instanceof UnauthorizedError) {
+                    // Private document
+                    this.publishNewPages(BookPageState.Inaccessible);
+                } else {
+                    // IIIF failure
                     this.publishNewPages(BookPageState.Failure);
                 }
             }

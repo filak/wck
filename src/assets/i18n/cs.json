@@ -199,6 +199,7 @@
   "book_controls": {
     "tooltip_print": "Příprava k tisku",
     "tooltip_pdf": "Vygenerovat PDF",
+    "tooltip_pdf_show": "Zobrazit PDF",
     "tooltip_jpg": "JPEG stránky",
     "tooltip_ocr": "Text stránky",
     "tooltip_quote": "Zobrazit citaci",

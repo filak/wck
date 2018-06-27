@@ -203,6 +203,7 @@
   "book_controls": {
     "tooltip_print": "Prepare to print",
     "tooltip_pdf": "Generate PDF",
+    "tooltip_pdf_show": "Show PDF",
     "tooltip_jpg": "JPEG of the page",
     "tooltip_ocr": "Text of the page",
     "tooltip_quote": "Show quotation",

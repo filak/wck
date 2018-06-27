@@ -1,4 +1,4 @@
-import { ViewerControlsService, ViewerActions } from './../../services/viewre-controls.service.';
+import { ViewerControlsService, ViewerActions } from './../../services/viewer-controls.service';
 import { Page } from './../../model/page.model';
 import { BookService } from './../../services/book.service';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
@@ -60,7 +60,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
     this.viewerActionsSubscription = this.controlsService.viewerActions().subscribe((action: ViewerActions) => {
         this.onActionPerformed(action);
     });
-}
+  }
 
 
   init() {

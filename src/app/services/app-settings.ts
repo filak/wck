@@ -22,6 +22,8 @@ export class AppSettings {
   public imageRawSize = APP_GLOBAL.imageRawSize;
   public generatePdfMaxRange = APP_GLOBAL.generatePdfMaxRange;
   public local_url = APP_GLOBAL.local_url;
+  public pdf_url = APP_GLOBAL.pdf_url;
+  public enable_pdf_url = APP_GLOBAL.enablePrivatePdfUrl;
 
 }
 

@@ -1,7 +1,7 @@
 <div id="app-viewer" class="app-viewer-wrapper" (mousemove)="onMouseMove()">
   <app-viewer-controls [class.hide-on-inactivity]="hideOnInactivity"></app-viewer-controls>
   
-  <span *ngIf="controlsService.leftPanelVisible && !controlsService.fullscreenEnabled()"
+  <span *ngIf="bookService.showNavigationPanel === true && controlsService.leftPanelVisible && !controlsService.fullscreenEnabled()"
         class="app-handle app-left-handle valign-wrapper hide-on-small-only" 
         (click)="controlsService.hideLeftPanel()" 
         mz-tooltip 
@@ -10,7 +10,7 @@
         <i class="app-mdi-menu-left" [class.app-mdi-tablet]="controlsService.leftPanelVisible"></i>
   </span>
 
-  <span *ngIf="!controlsService.leftPanelVisible && !controlsService.fullscreenEnabled()"
+  <span *ngIf="bookService.showNavigationPanel === true && !controlsService.leftPanelVisible && !controlsService.fullscreenEnabled()"
         class="app-handle app-left-handle valign-wrapper hide-on-small-only" 
         (click)="controlsService.showLeftPanel()" 
         mz-tooltip 

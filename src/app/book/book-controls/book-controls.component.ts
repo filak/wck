@@ -1,4 +1,5 @@
-import { BookService } from './../../services/book.service';
+import { AppSettings } from './../../services/app-settings';
+import { BookService, BookState } from './../../services/book.service';
 import { Component, OnInit, Input} from '@angular/core';
 
 @Component({
@@ -7,10 +8,11 @@ import { Component, OnInit, Input} from '@angular/core';
 export class BookControlsComponent implements OnInit {
 
 
-  constructor(public bookService: BookService) {
+  constructor(private appSettings: AppSettings, public bookService: BookService) {
   }
 
   ngOnInit() {
+
   }
 
 }

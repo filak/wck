@@ -1,4 +1,4 @@
-import { ViewerControlsService } from './../services/viewre-controls.service.';
+import { ViewerControlsService } from './../services/viewer-controls.service';
 import { Observable } from 'rxjs/Observable';
 import { LocalStorageService } from './../services/local-storage.service';
 import { DocumentItem } from './../model/document_item.model';

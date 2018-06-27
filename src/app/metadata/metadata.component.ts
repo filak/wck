@@ -95,4 +95,25 @@ export class MetadataComponent implements OnInit {
     }
   }
 
+  private getPdfShowLink(bookService) {
+
+    const path = bookService.pdf;
+
+    let uuid: string;
+    if (path.indexOf('uuid:') > -1) {
+      uuid = path.substr(path.indexOf('uuid:'), 41);
+    }
+    if (!uuid) {
+      return;
+    }
+
+    let url: string;
+    if (this.appSettings.pdf_url) {
+      url = this.appSettings.pdf_url.replace(/\$\{UUID\}/, uuid);
+    } else {
+      url = location.protocol + '//' + location.host + '/uuid/' + uuid;
+    }
+    return url;
+  }
+
 }

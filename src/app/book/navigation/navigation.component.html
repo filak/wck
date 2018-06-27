@@ -1,4 +1,4 @@
-<app-book-controls *ngIf="bookService.viewer === 'image'" class="hide-on-small-only"></app-book-controls>
+<app-book-controls *ngIf="bookService.viewer !== 'pdf'" class="hide-on-small-only"></app-book-controls>
 
 <div class="app-navigation-tabs" *ngIf="bookService.showNavigationTabs">
   <ul class="tabs">

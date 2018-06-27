@@ -1,4 +1,4 @@
-<mz-collection>
+<mz-collection *ngIf="bookService.viewer !== 'pdf'">
   <mz-collection-item>
     <i class="app-mdi-book-print app-cursor-pointer" (click)="bookService.prepareToPrint()"
        mz-tooltip [tooltip]="'book_controls.tooltip_print' | translate" [position]="'bottom'"></i>
