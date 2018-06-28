@@ -9,6 +9,18 @@ pdf-viewer {
     height:     100%;
 }
 
+#app-viewer:-moz-full-screen {
+  overflow: auto;
+}
+
+#app-viewer:-webkit-full-screen {
+  overflow: auto;
+}
+
+#app-viewer:fullscreen {
+  overflow: auto;
+}
+
 
 app-viewer, app-viewer-iiif, app-pdf-viewer {
   flex: 1;

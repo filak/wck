@@ -45,7 +45,7 @@ export class MetadataComponent implements OnInit {
   private getPagePersistentLink() {
     const path = location.pathname;
     const query = location.search;
-    console.log('query', query);
+    //console.log('query', query);
     let uuid: string;
     if (path.indexOf('uuid:') > -1) {
       uuid = path.substr(path.indexOf('uuid:'));

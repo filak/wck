@@ -43,8 +43,10 @@ export class PdfViewerComponent implements  OnInit {
   onError(error: any) {
     this.bookService.bookState = BookState.Failure;
     if (error && error['status'] === 403) {
+      console.log('PDF Inaccessible');
       this.bookService.pageState = BookPageState.Inaccessible;
     } else {
+      console.log('PDF Failure');
       this.bookService.pageState = BookPageState.Failure;
     }
   }

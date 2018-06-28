@@ -62,6 +62,7 @@
     [rotation]="rotation"
     (after-load-complete)="onSuccess($event)"
     (error)="onError($event)"
+    (cursorToolOnLoad)=1
     [src]="{
       url: bookService.pdf,
       withCredentials: false

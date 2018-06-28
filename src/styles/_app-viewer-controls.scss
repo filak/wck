@@ -1,7 +1,8 @@
 // --- Viewer Controls ---
 
 .pdf-toolbar app-viewer-controls {
-  top: 10px;
+  position: fixed;
+  bottom: 24px;
 }
 
 app-viewer-controls {
@@ -16,7 +17,7 @@ app-viewer-controls {
     position: relative;
     transition: opacity .4s ease 0s;
     opacity: 1;
-    margin-right: -50%;
+    margin-right: -90%;
     display: inline-block;
     -webkit-transform: translate(-50%, 0%);    
     transform: translate(-50%, 0%);
@@ -36,11 +37,11 @@ app-viewer-controls {
     }
     
     &.app-mdi-page-left {
-      margin-right: 20px;
+      margin-right: 0px;
     }
     
     &.app-mdi-page-right {
-      margin-left: 20px;
+      margin-left: 0px;
     }
     
     &.app-inactive {

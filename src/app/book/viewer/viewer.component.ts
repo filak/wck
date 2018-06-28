@@ -309,6 +309,9 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
 
   addStaticImage(url, width, height, type) {
+
+    console.log('OL Static img: '+url);
+
     let extent;
     if (type === 0) {
       extent = [0, -height, width, 0];

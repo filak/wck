@@ -59,7 +59,8 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
       defaultZoomLevel: 0,
       collectionMode: true,
       collectionRows: 1,
-      collectionTileMargin: 1,
+      collectionTileMargin: 0,
+      collectionTileSize: 1400,
       degrees: 0,
       showRotationControl: true,
       gestureSettingsTouch: {
@@ -127,8 +128,10 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
         }
     }
 
-
-    this.view.open(images);
+    if (images.length > 0) {
+        //console.log(images);
+        this.view.open(images);
+    }
 
   }
 

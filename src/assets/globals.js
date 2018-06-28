@@ -1,5 +1,5 @@
 var APP_GLOBAL = {
-  wckversion: '1.0.5',
+  wckversion: '1.0.6',
   title: 'Národní lékařská knihovna',
   logo: 'assets/img/nlk-logo-small.gif',
   url: '//kramerius-dev.nlk',
@@ -12,7 +12,7 @@ var APP_GLOBAL = {
   ga: 'UA-...',
   share_url: 'http://kramerius-dev.nlk/uuid/${UUID}',
   local_url: 'https://www.medvik.cz/link/${ID}',
-  pdf_url: 'http://kramerius.medvik.cz/search/pdf/web/viewer.html?pid=${UUID}',
+  pdf_url: '/assets/pdf/web/viewer.html?pid=${UUID}',
   enablePrivatePdfUrl: true,
   doctypes: ['monograph','periodical','article'],
   enablePeriodicalVolumesYearsLayout: true, 

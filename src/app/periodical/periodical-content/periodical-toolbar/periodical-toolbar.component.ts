@@ -10,7 +10,7 @@ export class PeriodicalToolbarComponent implements OnInit {
   constructor(public periodicalService: PeriodicalService) { }
 
   ngOnInit() {
-    console.log(this.periodicalService.metadata.titles[0].maintTitle());
+    //console.log(this.periodicalService.metadata.titles[0].maintTitle());
   }
 
   selectLayout(layout: string) {

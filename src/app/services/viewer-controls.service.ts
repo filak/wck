@@ -102,7 +102,7 @@ export class ViewerControlsService {
     }
 
     onFullscreenChanged() {
-        console.log('onFullscreenchanged');
+        //console.log('onFullscreenchanged');
         this.fitToScreen();
         setTimeout(() => {
             this.fitToScreen();

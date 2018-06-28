@@ -80,7 +80,7 @@ export class BookService {
         private history: HistoryService,
         private router: Router,
         private modalService: MzModalService,
-        private appSettings: AppSettings,) {
+        private appSettings: AppSettings) {
 
         this.IMG_VIEWER = appSettings.imageViewer;
         this.IMG_RAW_SIZE = appSettings.imageRawSize;
@@ -513,7 +513,6 @@ export class BookService {
         }
     }
 
-
     fulltextAllPagesChanged(pageUuid: string = null) {
         const currentPage = this.getPage();
         let uuid;
@@ -890,6 +889,7 @@ export class BookService {
         });
         image.onerror = (() => {
             // JPEG failure
+            console.log('RAW image failed: '+page.uuid);
             image.onerror = null;
             this.publishNewPages(BookPageState.Failure);
         });
@@ -915,6 +915,8 @@ export class BookService {
                     this.publishNewPages(BookPageState.Inaccessible);
                 } else {
                     // Zoomify failure
+                    console.log('Zoomify failed: '+page.uuid);
+
                     this.publishNewPages(BookPageState.Failure);
                 }
             }
@@ -939,6 +941,7 @@ export class BookService {
                     this.publishNewPages(BookPageState.Inaccessible);
                 } else {
                     // IIIF failure
+                    console.log('IIIF failed: '+page.uuid);
                     this.publishNewPages(BookPageState.Failure);
                 }
             }

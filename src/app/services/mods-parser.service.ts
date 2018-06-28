@@ -31,6 +31,7 @@ export class ModsParserService {
         this.processLocations(root['location'], metadata);
         this.processSubjects(root['subject'], metadata);
         this.processLanguages(root['language'], metadata);
+        this.processParts(root['part'], metadata);
         this.processReview(root, metadata);
         this.processPhysicalDescriptions(root['physicalDescription'], metadata);
         this.processSimpleArray(root['note'], metadata.notes, null);
@@ -48,6 +49,7 @@ export class ModsParserService {
         this.processLocations(root['location'], metadata);
         this.processSubjects(root['subject'], metadata);
         this.processLanguages(root['language'], metadata);
+        this.processParts(root['part'], metadata);
         this.processPhysicalDescriptions(root['physicalDescription'], metadata);
         this.processSimpleArray(root['note'], metadata.notes, null);
         this.processSimpleArray(root['tableOfContents'], metadata.contents, null);
@@ -77,6 +79,26 @@ export class ModsParserService {
     }
 
 
+
+    private processParts(array, metadata: Metadata) {
+        if (!array) {
+            return;
+        }
+        for (const item of array) {
+            if (item.extent && item.extent[0]) {
+                const extent = item.extent[0];
+
+                if (extent.start && extent.end) {
+                    const start = this.getText(extent.start);
+                    const end = this.getText(extent.end);
+                    metadata.extent = start + '-' + end;
+                } else {
+                    metadata.extent = extent.list[0]._;
+                }
+                return;
+            }
+        }
+    }
 
 
     private processTitles(array, metadata: Metadata) {
@@ -150,17 +172,24 @@ export class ModsParserService {
         if (!ris || ris.length === 0) {
             return;
         }
-        const ri = ris[0];
-        const review = new Metadata();
-        this.processTitles(ri['titleInfo'], review);
-        this.processAuthors(ri['name'], review);
-        this.processPublishers(ri['originInfo'], review);
-        this.processLocations(ri['location'], review);
-        this.processSubjects(ri['subject'], review);
-        this.processLanguages(ri['language'], review);
-        this.processSimpleArray(ri['note'], review.notes, null);
-        this.processSimpleArray(ri['abstract'], review.abstracts, null);
-        this.processSimpleArray(ri['genre'], review.genres, { key: 'authority', value: 'czenas' });
+        let review: Metadata;
+        for (const ri of ris) {
+            review = new Metadata();
+            this.processTitles(ri['titleInfo'], review);
+            this.processAuthors(ri['name'], review);
+            this.processPublishers(ri['originInfo'], review);
+            this.processLocations(ri['location'], review);
+            this.processSubjects(ri['subject'], review);
+            this.processParts(ri['part'], review);
+            this.processLanguages(ri['language'], review);
+            this.processSimpleArray(ri['note'], review.notes, null);
+            this.processSimpleArray(ri['abstract'], review.abstracts, null);
+            this.processSimpleArray(ri['genre'], review.genres, { key: 'authority', value: 'czenas' });
+            if (ri['$'] && ri['$']['displayLabel'] === 'Recenze na:') {
+                metadata.review = review;
+                return;
+            }
+        }
         metadata.review = review;
     }
 
@@ -256,7 +285,10 @@ export class ModsParserService {
                 const elem = item.languageTerm;
                 const params = elem[0]['$'];
                 if (params['type'] === 'code' && params['authority'] === 'iso639-2b') {
-                    metadata.languages.push(this.getText(elem));
+                    const lang = this.getText(elem);
+                    if (lang && lang.length > 0) {
+                        metadata.languages.push(lang);
+                    }
                 }
             }
         }
