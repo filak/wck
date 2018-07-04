@@ -13,7 +13,7 @@ import * as OpenSeadragon from 'openseadragon';
 })
 export class IiifViewerComponent implements OnInit, OnDestroy {
 
-  private view;
+  private viewer;
 
   private viewerActionsSubscription: Subscription;
   private pageSubscription: Subscription;
@@ -48,7 +48,7 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
 
   init() {
 
-    this.view = OpenSeadragon({
+    this.viewer = new OpenSeadragon({
       id: "openseadragon",
       toolbar: "osd-nav",
       zoomInButton:   "osd-zoom-in",
@@ -57,16 +57,15 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
       showNavigationControl: true,
       prefixUrl: "/assets/img/osd/",
       defaultZoomLevel: 0,
-      collectionMode: true,
-      collectionRows: 1,
-      collectionTileMargin: 0,
-      collectionTileSize: 1400,
       degrees: 0,
       showRotationControl: true,
       gestureSettingsTouch: {
           pinchRotate: true
-      }
+      },
+      //debugMode: true
     });
+
+
   }
 
 
@@ -74,7 +73,6 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
     this.lastMouseMove = new Date().getTime();
     this.hideOnInactivity = false;
   }
-
 
 
   updateView(leftPage: Page, rightPage: Page) {
@@ -98,41 +96,107 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
         //this.rotateLeft();
         break;
       case ViewerActions.fitToScreen:
-        this.view.viewport.goHome(true);
+        this.viewer.viewport.goHome(true);
         break;
     }
   }
 
 
-
-
-
-
   updateImage(image1: Page, image2: Page) {
 
+    this.viewer.clearOverlays();
+
     var images = [];
+    var boxes = [];
 
     if (image1) {
+
         if (image1.zoomify) {
-            images.push(image1.url+'info.json')
+            images.push(image1.url+'info.json');
+        /* TO DO */
+        //} else if (image1.zoomify) {
+        //    images.push({type: 'zoomifytileservice', url: image1.url, width: image1.width, height: image1.height});
         } else {
-            images.push({type: 'image', url: image1.url})
+            images.push({type: 'image', url: image1.url});
+        }
+
+        if('altoBoxes' in image1) {
+          if (image1.altoBoxes) {
+              boxes.push({0: image1.altoBoxes[1]});
+          }
         }
     }
 
     if (image2) {
+
         if (image2.zoomify) {
             images.push(image2.url+'info.json')
         } else {
             images.push({type: 'image', url: image2.url})
         }
+
+        if('altoBoxes' in image2) {
+          if (image2.altoBoxes) {
+              boxes.push({1: image2.altoBoxes[1]});
+          }
+        }
     }
 
-    if (images.length > 0) {
-        //console.log(images);
-        this.view.open(images);
+    if (images.length === 1) {
+        this.viewer.open([
+          {
+            tileSource: images[0],
+            x: 0
+          }
+        ]);
     }
 
+    if (images.length === 2) {
+        this.viewer.open([
+          {
+            tileSource: images[0],
+            x: 0
+          },
+          {
+            tileSource: images[1],
+            x: 1
+          }
+        ]);
+    }
+
+    this.viewer.removeHandler('open', this.updateBoxes);
+    this.viewer.addHandler('open', this.updateBoxes, boxes);
+
+  }
+
+
+  updateBoxes(boxes) {
+
+     for (let item = 0; item < boxes.userData.length; item++) {
+
+        for (let i = 0; i < boxes.userData[item][0].length; i++) {
+
+          var x = boxes.userData[item][0][i][0];
+          var y = boxes.userData[item][0][i][1];
+          var w = boxes.userData[item][0][i][2];
+          var h = boxes.userData[item][0][i][3];
+
+          //console.log(x, y, w, h);
+
+          var Point1 = new OpenSeadragon.Point(x, y);
+          var Point2 = new OpenSeadragon.Point(x + w, y + h);
+
+          var topLeft = boxes.eventSource.world.getItemAt(item).imageToViewportCoordinates(Point1);
+          var bottomRight = boxes.eventSource.world.getItemAt(item).imageToViewportCoordinates(Point2);
+
+          boxes.eventSource.addOverlay({
+              location: new OpenSeadragon.Rect(topLeft.x,
+                                               topLeft.y,
+                                               bottomRight.x - topLeft.x,
+                                               bottomRight.y - topLeft.y)
+          });
+        }
+     }
   }
 
 
@@ -148,7 +212,7 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
       this.intervalSubscription.unsubscribe();
     }
 
-    this.view.destroy();
+    this.viewer.destroy();
 
   }
 

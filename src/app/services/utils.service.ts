@@ -1,9 +1,13 @@
 import { DocumentItem, Context } from './../model/document_item.model';
 import { Injectable } from '@angular/core';
-
+import { AppSettings } from './app-settings';
 
 @Injectable()
 export class Utils {
+
+  constructor(private appSettings: AppSettings) {
+
+  }
 
     static inQuotes(text: string): boolean {
         return text && text.startsWith('"') && text.endsWith('"');
@@ -56,9 +60,11 @@ export class Utils {
             raw = false;
         }
 
-        if (json.hasOwnProperty('iiif')) {
+        if (json.hasOwnProperty('iiif') && this.appSettings.imageProtocol === 'iiif') {
             item.iiif_url = json['iiif'];
             raw = false;
+        } else {
+            item.iiif_url = '';
         }
 
         item.raw_img = raw;

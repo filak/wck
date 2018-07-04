@@ -19,6 +19,7 @@ export class AppSettings {
 
   public lowerPidPath = APP_GLOBAL.lowerPidPath;
   public imageViewer = APP_GLOBAL.imageViewer;
+  public imageProtocol = APP_GLOBAL.imageProtocol;
   public imageRawSize = APP_GLOBAL.imageRawSize;
   public generatePdfMaxRange = APP_GLOBAL.generatePdfMaxRange;
   public local_url = APP_GLOBAL.local_url;

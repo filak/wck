@@ -179,6 +179,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
   updateBoxes(data) {
     this.vectorLayer.getSource().clear();
+
     if (!data) {
       return;
     }
@@ -252,7 +253,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
       }
     }
     if (image1.altoBoxes) {
-      this.updateBoxes(image1.altoBoxes);
+      this.updateBoxes(image1.altoBoxes[0]);
     }
     this.fitToScreen();
   }

@@ -9,6 +9,12 @@ pdf-viewer {
     height:     100%;
 }
 
+.openseadragon-overlay {
+      opacity:    0.3;
+      outline:    5px auto #f44336;
+      background-color: yellow;
+  }
+
 #app-viewer:-moz-full-screen {
   overflow: auto;
 }

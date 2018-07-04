@@ -7,9 +7,9 @@
     [class.app-panel-mobile-hidden]="bookService.activeMobilePanel != 'navigation'">
   </app-navigation>
   
-  <app-viewer *ngIf="bookService.viewer === 'image' && bookService.IMG_VIEWER === 'zoomify'"></app-viewer>
+  <app-viewer *ngIf="bookService.viewer === 'image' && bookService.IMG_VIEWER === 'ol'"></app-viewer>
 
-  <app-viewer-iiif *ngIf="bookService.viewer === 'image' && bookService.IMG_VIEWER === 'iiif'"></app-viewer-iiif>
+  <app-viewer-iiif *ngIf="bookService.viewer === 'image' && bookService.IMG_VIEWER === 'osd'"></app-viewer-iiif>
 
   <app-pdf-viewer *ngIf="bookService.viewer === 'pdf'"></app-pdf-viewer>
 

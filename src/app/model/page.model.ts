@@ -16,6 +16,7 @@ export class Page {
     width: number;
     height: number;
     url: string;
+    iiif_url: string;
     zoomify: boolean;
     altoBoxes: any[];
 
@@ -23,15 +24,16 @@ export class Page {
 
     }
 
-    public setImageProperties(width: number, height: number, url: string, zoomify: boolean) {
+    public setImageProperties(width: number, height: number, url: string, zoomify: boolean, iiif_url:string) {
         this.width = width;
         this.height = height;
         this.url = url;
         this.zoomify = zoomify;
+        this.iiif_url = iiif_url;
     }
 
     public hasImageData() {
-        return this.width && this.height && this.url;
+        return this.width && this.height && this.url && this.iiif_url;
     }
 
 }
