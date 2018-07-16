@@ -862,7 +862,7 @@ export class BookService {
                 if (item.raw_img) {
                     this.fetchImageRaw(page);
 
-                } else if (this.IMG_PROTOCOL === 'iiif') {
+                } else if (item.iiif_url !== '') {
                     this.fetchImagePropertiesIiif(page);
 
                 } else {
@@ -885,12 +885,12 @@ export class BookService {
         const image = new Image();
         const subject = this.subject;
         image.onload = (() => {
-            page.setImageProperties(image.width, image.height, jepgUrl, false, '');
+            page.setImageProperties(image.width, image.height, jepgUrl, false);
             this.publishNewPages(BookPageState.Success);
         });
         image.onerror = (() => {
             // JPEG failure
-            console.log('RAW image failed: '+page.uuid);
+            console.log('JPEG image failed: '+page.uuid);
             image.onerror = null;
             this.publishNewPages(BookPageState.Failure);
         });
@@ -907,7 +907,7 @@ export class BookService {
                 const a = response.toLowerCase().split('"');
                 const width = parseInt(a[1], 10);
                 const height = parseInt(a[3], 10);
-                page.setImageProperties(width, height, url, true, '');
+                page.setImageProperties(width, height, url, true);
                 this.publishNewPages(BookPageState.Success);
             },
             (error: AppError)  => {
@@ -917,7 +917,6 @@ export class BookService {
                 } else {
                     // Zoomify failure
                     console.log('Zoomify failed: '+page.uuid);
-
                     this.publishNewPages(BookPageState.Failure);
                 }
             }
@@ -933,7 +932,7 @@ export class BookService {
             response => {
                 const width = response.width;
                 const height = response.height;
-                page.setImageProperties(width, height, url, true, page.iiif_url);
+                page.setImageProperties(width, height, url, true);
                 this.publishNewPages(BookPageState.Success);
             },
             (error: AppError)  => {
@@ -961,10 +960,10 @@ export class BookService {
         }
         if (state !== BookPageState.Success) {
             if (leftPage) {
-                leftPage.setImageProperties(-1, -1, null, true, null);
+                leftPage.setImageProperties(-1, -1, null, true);
             }
             if (rightPage) {
-                rightPage.setImageProperties(-1, -1, null, true, null);
+                rightPage.setImageProperties(-1, -1, null, true);
             }
         }
         this.pageState = state;

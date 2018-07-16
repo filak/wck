@@ -55,7 +55,7 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
       zoomOutButton:  "osd-zoom-out",
       rotateRightButton: "osd-rotate-right",
       showNavigationControl: true,
-      prefixUrl: "/assets/img/osd/",
+      prefixUrl: "assets/img/osd/",
       defaultZoomLevel: 0,
       degrees: 0,
       showRotationControl: true,
@@ -111,11 +111,12 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
 
     if (image1) {
 
-        if (image1.zoomify) {
+        //console.log(image1);
+
+        if (image1.iiif) {
             images.push(image1.url+'info.json');
-        /* TO DO */
-        //} else if (image1.zoomify) {
-        //    images.push({type: 'zoomifytileservice', url: image1.url, width: image1.width, height: image1.height});
+        } else if (image1.zoomify) {
+            images.push({type: 'zoomifytileservice', tilesUrl: image1.url, width: image1.width, height: image1.height});
         } else {
             images.push({type: 'image', url: image1.url});
         }
@@ -129,10 +130,14 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
 
     if (image2) {
 
-        if (image2.zoomify) {
-            images.push(image2.url+'info.json')
+        //console.log(image2);
+
+        if (image2.iiif) {
+            images.push(image2.url+'info.json');
+        } else if (image2.zoomify) {
+            images.push({type: 'zoomifytileservice', tilesUrl: image2.url, width: image2.width, height: image2.height});
         } else {
-            images.push({type: 'image', url: image2.url})
+            images.push({type: 'image', url: image2.url});
         }
 
         if('altoBoxes' in image2) {
@@ -180,8 +185,6 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
           var y = boxes.userData[item][0][i][1];
           var w = boxes.userData[item][0][i][2];
           var h = boxes.userData[item][0][i][3];
-
-          //console.log(x, y, w, h);
 
           var Point1 = new OpenSeadragon.Point(x, y);
           var Point2 = new OpenSeadragon.Point(x + w, y + h);

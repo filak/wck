@@ -16,24 +16,32 @@ export class Page {
     width: number;
     height: number;
     url: string;
-    iiif_url: string;
     zoomify: boolean;
+    iiif: boolean;
     altoBoxes: any[];
 
     constructor() {
 
     }
 
-    public setImageProperties(width: number, height: number, url: string, zoomify: boolean, iiif_url:string) {
+    public setImageProperties(width: number, height: number, url: string, zoomify: boolean) {
         this.width = width;
         this.height = height;
         this.url = url;
         this.zoomify = zoomify;
-        this.iiif_url = iiif_url;
+
+        if (url) {
+          if (url.indexOf('/iiif/') > -1) {
+            this.iiif = true;
+          } else {
+            this.iiif = false;
+          }
+        }
+
     }
 
     public hasImageData() {
-        return this.width && this.height && this.url && this.iiif_url;
+        return this.width && this.height && this.url;
     }
 
 }

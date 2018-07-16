@@ -94,7 +94,6 @@ import { PeriodicalFiltersComponent } from './periodical/periodical-filters/peri
 import { NgxGalleryModule } from 'ngx-gallery';
 import { DialogMetadataComponent } from './dialog/dialog-metadata/dialog-metadata.component';
 
-
 import { MzButtonModule, MzInputModule, MzModalModule, MzNavbarModule, MzIconModule, MzIconMdiModule, MzTooltipModule, MzSidenavModule, MzSpinnerModule, MzBadgeModule, MzTabModule, MzCollapsibleModule, MzCollectionModule, MzCardModule, MzDropdownModule, MzCheckboxModule, MzDatepickerModule } from 'ngx-materialize';
 
 const ROUTES: Routes = [
@@ -234,5 +233,4 @@ const ROUTES: Routes = [
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-export class LibraryAppModule { }
 
