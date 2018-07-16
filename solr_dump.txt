@@ -1,0 +1,16 @@
+q=fedora.model:article
+
+
+q=PID:(*uuid\:MED* OR *uuid\:med*) AND fedora.model:monograph
+
+q=pid_path:(*uuid\:MED* OR *uuid\:med*) fedora.model:monographunit
+
+
+q=PID:(*uuid\:MED* OR *uuid\:med*) AND fedora.model:periodical
+
+q=pid_path:(*uuid\:MED* OR *uuid\:med*) AND (fedora.model:periodicalvolume OR fedora.model:periodicalissue)
+
+
+
+
+fl=PID,fedora.model,pid_path,parent_pid,root_pid,rok,datum_str,status,level ? dc.identifier

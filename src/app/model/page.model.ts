@@ -17,6 +17,7 @@ export class Page {
     height: number;
     url: string;
     zoomify: boolean;
+    iiif: boolean;
     altoBoxes: any[];
 
     constructor() {
@@ -28,6 +29,15 @@ export class Page {
         this.height = height;
         this.url = url;
         this.zoomify = zoomify;
+
+        if (url) {
+          if (url.indexOf('/iiif/') > -1) {
+            this.iiif = true;
+          } else {
+            this.iiif = false;
+          }
+        }
+
     }
 
     public hasImageData() {

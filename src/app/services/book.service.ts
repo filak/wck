@@ -61,6 +61,7 @@ export class BookService {
     public intpart: InternalPart;
 
     public IMG_VIEWER: string;
+    public IMG_PROTOCOL: string;
     private IMG_RAW_SIZE: number;
     private MAX_PAGE_CNT: number;
 
@@ -83,6 +84,7 @@ export class BookService {
         private appSettings: AppSettings) {
 
         this.IMG_VIEWER = appSettings.imageViewer;
+        this.IMG_PROTOCOL = appSettings.imageProtocol;
         this.IMG_RAW_SIZE = appSettings.imageRawSize;
         this.MAX_PAGE_CNT = appSettings.generatePdfMaxRange;
         this.enable_pdf_url = appSettings.enable_pdf_url ;
@@ -848,7 +850,7 @@ export class BookService {
 
         this.krameriusApiService.getItem(page.uuid).subscribe((item: DocumentItem) => {
 
-            //console.log(item);
+            console.log(item);
 
             if (item.pdf) {
                 this.viewer = 'pdf';
@@ -860,8 +862,7 @@ export class BookService {
                 if (item.raw_img) {
                     this.fetchImageRaw(page);
 
-                } else if (this.IMG_VIEWER === 'iiif') {
-
+                } else if (item.iiif_url !== '') {
                     this.fetchImagePropertiesIiif(page);
 
                 } else {
@@ -889,7 +890,7 @@ export class BookService {
         });
         image.onerror = (() => {
             // JPEG failure
-            console.log('RAW image failed: '+page.uuid);
+            console.log('JPEG image failed: '+page.uuid);
             image.onerror = null;
             this.publishNewPages(BookPageState.Failure);
         });
@@ -916,7 +917,6 @@ export class BookService {
                 } else {
                     // Zoomify failure
                     console.log('Zoomify failed: '+page.uuid);
-
                     this.publishNewPages(BookPageState.Failure);
                 }
             }

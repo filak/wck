@@ -1860,7 +1860,7 @@ var validateFileURL = void 0;
       }
       var fileOrigin = new URL(file, window.location.href).origin;
       if (fileOrigin !== viewerOrigin) {
-        throw new Error('file origin does not match viewer\'s');
+        throw new Error('file origin does not match viewer\'s : '+fileOrigin);
       }
     } catch (ex) {
       var message = ex && ex.message;
@@ -1900,7 +1900,7 @@ function webViewerInitialized() {
 
     if (params.pid) {
       pid = params.pid ;
-      file = '//kramerius.medvik.cz/search/api/v5.0/item/' + pid + '/streams/IMG_FULL';
+      file = '/search/api/v5.0/item/' + pid + '/streams/IMG_FULL';
     }
 
   validateFileURL(file);

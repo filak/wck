@@ -179,6 +179,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
   updateBoxes(data) {
     this.vectorLayer.getSource().clear();
+
     if (!data) {
       return;
     }
@@ -252,7 +253,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
       }
     }
     if (image1.altoBoxes) {
-      this.updateBoxes(image1.altoBoxes);
+      this.updateBoxes(image1.altoBoxes[0]);
     }
     this.fitToScreen();
   }
@@ -310,7 +311,7 @@ export class ViewerComponent implements OnInit, OnDestroy {
 
   addStaticImage(url, width, height, type) {
 
-    console.log('OL Static img: '+url);
+    //console.log('OL Static img: '+url);
 
     let extent;
     if (type === 0) {
