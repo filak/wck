@@ -10,7 +10,7 @@ export class Metadata {
     public modsMap = {};
 
     public uuid: string;
-    public identif_local: string;
+    public identif_local: string = '';
     public titles: TitleInfo[] = [];
     public authors: Author[] = [];
     public publishers: Publisher[] = [];

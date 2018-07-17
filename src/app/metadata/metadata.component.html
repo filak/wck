@@ -3,8 +3,8 @@
   <div class="app-metadata-controls" *ngIf="controlsEnabled">
 
         <a *ngIf="metadata.identif_local" href="{{getLocalLink(metadata.identif_local)}}" target="_blank">
-        <i class="app-mdi-book-source"
-            mz-tooltip [tooltip]="'book_controls.tooltip_source' | translate" [position]="'bottom'"></i>
+            <i class="app-mdi-book-source"
+                mz-tooltip [tooltip]="'book_controls.tooltip_source' | translate" [position]="'bottom'"></i>
         </a>
 
         <a *ngIf="bookService.activeNavigationTab === 'intparts' && metadata.intpart && metadata.intpart.metadata.identif_local"
@@ -66,6 +66,18 @@
     <div class="divider"></div>
 
     </ng-container>
+
+    <div *ngIf="bookService.activeNavigationTab === 'intparts' && metadata.intpart && metadata.intpart.metadata" >
+      <label>{{ 'metadata.intpart' | translate }}</label>
+      <app-metadata [metadata]="metadata.intpart.metadata" class="app-nested" [showControls]="false"></app-metadata>
+      <div class="divider"></div>
+    </div>
+
+    <div *ngIf="bookService.activeNavigationTab === 'articles' && metadata.article && metadata.article.metadata" >
+      <label>{{ 'metadata.article' | translate }}</label>
+      <app-metadata [metadata]="metadata.article.metadata" class="app-nested" [showControls]="false"></app-metadata>
+      <div class="divider"></div>
+    </div>
 
     <div *ngIf="metadata.authors.length > 0">
       <label>{{ 'metadata.author' | translate }}</label>
@@ -138,18 +150,6 @@
         </a>
       </div>
 
-      <div class="divider"></div>
-    </div>
-
-    <div *ngIf="bookService.activeNavigationTab === 'intparts' && metadata.intpart && metadata.intpart.metadata" >
-      <label>{{ 'metadata.intpart' | translate }}</label>
-      <app-metadata [metadata]="metadata.intpart.metadata" class="app-nested" [showControls]="false"></app-metadata>
-      <div class="divider"></div>
-    </div>
-
-    <div *ngIf="bookService.activeNavigationTab === 'articles' && metadata.article && metadata.article.metadata" >
-      <label>{{ 'metadata.article' | translate }}</label>
-      <app-metadata [metadata]="metadata.article.metadata" class="app-nested" [showControls]="false"></app-metadata>
       <div class="divider"></div>
     </div>
 

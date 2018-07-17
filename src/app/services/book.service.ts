@@ -850,7 +850,7 @@ export class BookService {
 
         this.krameriusApiService.getItem(page.uuid).subscribe((item: DocumentItem) => {
 
-            console.log(item);
+            //console.log(item);
 
             if (item.pdf) {
                 this.viewer = 'pdf';
