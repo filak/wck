@@ -60,7 +60,12 @@ export class IiifViewerComponent implements OnInit, OnDestroy {
       degrees: 0,
       showRotationControl: true,
       gestureSettingsTouch: {
-          pinchRotate: true
+          dblClickToZoom: false,
+          pinchRotate: false
+      },
+      gestureSettingsUnknown:  {
+          dblClickToZoom: false,
+          pinchRotate: false
       },
       //debugMode: true
     });
