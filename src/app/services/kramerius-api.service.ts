@@ -66,6 +66,7 @@ export class KrameriusApiService {
         return this.http.get(encodeURI(url));
     }
 
+
     getSearchResults(query: string) {
         const url = this.API_URL + '/search?'
             + query;
@@ -83,15 +84,15 @@ export class KrameriusApiService {
     }
 
     getNewest() {
-        const url = this.API_URL + '/search?fl=PID,dostupnost,dc.creator,dc.title,datum_str,fedora.model,img_full_mime&q=(fedora.model:monograph OR fedora.model:periodical OR fedora.model:soundrecording OR fedora.model:map OR fedora.model:graphic OR fedora.model:sheetmusic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:article)+AND+dostupnost:public&sort=created_date desc&rows=24&start=0';
+        const url = this.API_URL + '/search?fl=PID,dostupnost,dc.creator,dc.contributor,dc.title,datum_str,fedora.model,img_full_mime&q=(fedora.model:monograph OR fedora.model:periodical OR fedora.model:soundrecording OR fedora.model:map OR fedora.model:graphic OR fedora.model:sheetmusic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:article)+AND+dostupnost:public&sort=created_date desc&rows=24&start=0';
         return this.doGet(url)
             .map(response => this.solrService.documentItems(response.json()))
             .catch(this.handleError);
     }
 
     getFulltextUuidList(uuid, query) {
-        const url = this.API_URL + '/search/?fl=PID&q=parent_pid:"'
-            + uuid + '"'
+        const url = this.API_URL + '/search/?fl=PID&q=('
+            + 'root_pid:"'+ uuid + '" OR parent_pid:"'+ uuid + '")'
             + ' AND (fedora.model:page OR fedora.model:article)'
             + ' AND text:'
             + query
@@ -132,7 +133,12 @@ export class KrameriusApiService {
         if (query && applyYear && query.isYearRangeSet()) {
             url += ' AND (rok:[' + query.from + ' TO ' + query.to + '] OR (datum_begin:[* TO ' + query.to + '] AND datum_end:[' + query.from + ' TO *]))';
         }
-        url += '&sort=datum asc,datum_str asc,fedora.model asc&rows=1500&start=0';
+        url += '&sort=';
+        if (level > 1) {
+            url += 'datum asc,';
+        }
+        url += 'datum_str asc,fedora.model asc,dc.title asc&rows=1500&start=0';
+        // url += '&sort=datum asc,datum_str asc,fedora.model asc&rows=1500&start=0';
         return this.doGet(url)
             .map(response => response.json())
             .catch(this.handleError);
@@ -159,7 +165,6 @@ export class KrameriusApiService {
         } else {
             var ppath = periodicalUuid;
         }
-
 
         if (volumeUuid) {
             url += 'pid_path:' + this.utils.escapeUuid(ppath) + '/' + this.utils.escapeUuid(volumeUuid)  + '/*';
@@ -191,6 +196,7 @@ export class KrameriusApiService {
             .catch(this.handleError);
     }
 
+
     getSearchAutocompleteUrl(term: string, onlyPublic: boolean = false): string {
         let query = term.toLowerCase().trim()
                         .replace(/"/g, '\\"').replace(/~/g, '\\~')
@@ -199,7 +205,7 @@ export class KrameriusApiService {
         if (!term.endsWith(' ') && !term.endsWith(':')) {
             query += '*';
         }
-        let result = this.API_URL + '/search/?fl=PID,dc.title,dc.creator&q='
+        let result = this.API_URL + '/search/?fl=PID,dc.title,dc.creator,dc.contributor&q='
         + '(fedora.model:monograph^5 OR fedora.model:periodical^4 OR fedora.model:map '
         + 'OR fedora.model:graphic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:sheetmusic OR fedora.model:soundrecording OR fedora.model:article)';
         if (onlyPublic) {
@@ -211,6 +217,7 @@ export class KrameriusApiService {
         result += ' AND dc.title:'  + query + '&rows=30';
         return result;
     }
+
 
     getThumbUrl(uuid: string) {
         return this.getItemUrl(uuid) + '/thumb';
@@ -227,6 +234,15 @@ export class KrameriusApiService {
     getMp3Url(uuid: string): string {
         return this.getItemStreamUrl(uuid, KrameriusApiService.STREAM_MP3);
     }
+
+    downloadMp3(uuid: string) {
+        const url = this.getItemStreamUrl(uuid, KrameriusApiService.STREAM_MP3);
+        return this.http.get(url, {
+            responseType: ResponseContentType.Blob
+        });
+    }
+
+
 
     getScaledJpegUrl(uuid: string, height: number): string {
         let url = this.BASE_URL + '/search/img?pid=' + uuid + '&stream=IMG_FULL';
@@ -249,6 +265,7 @@ export class KrameriusApiService {
             responseType: ResponseContentType.Blob
         });
     }
+
 
     getOcr(uuid: string) {
         const url = this.getItemStreamUrl(uuid, KrameriusApiService.STREAM_OCR);
