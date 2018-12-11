@@ -81,9 +81,10 @@
 
     <div *ngIf="metadata.authors.length > 0">
       <label>{{ 'metadata.author' | translate }}</label>
-      <div *ngFor="let author of metadata.authors; first as first" [class.space]="!first" class="app-value">
-          <a routerLink='/search' [queryParams]="{authors: author.name }">{{ author.name }}</a>
+      <div *ngFor="let author of metadata.authors; let index=index" class="app-value">
+          <a *ngIf="index < 2" routerLink='/search' [queryParams]="{authors: author.name }">{{ author.name }}</a>
       </div>
+      <i mz-icon-mdi [icon]="'more'" [size]="'20'" (click)="showAuthors()" mz-tooltip [tooltip]="'common.authors_info' | translate" [position]="'top'" class="app-more app-cursor-pointer"></i>
       <div class="divider"></div>
     </div>
     
@@ -125,6 +126,14 @@
       <div *ngIf="metadata.currentIssue.metadata" >
         <app-metadata [metadata]="metadata.currentIssue.metadata" class="app-nested" [showControls]="false"></app-metadata>
       </div>
+
+      <div class="divider"></div>
+    </div>
+
+    <div *ngIf="metadata.currentUnit">
+      <label>{{ 'metadata.unit' | translate }}</label>
+      <!-- <div class="app-value"><strong>{{ metadata.currentUnit.title }}</strong></div>
+      <div class="app-value" >{{ 'metadata.unit_number' | translate }} <strong>{{ metadata.currentUnit.subtitle }}</strong></div>
       -->
 
       <div class="divider"></div>
@@ -244,7 +253,7 @@
 
   <div *ngIf="metadata.review && metadata.review.metadata" >
     <label>{{ 'metadata.review_of' | translate }}</label>
-    <app-metadata [metadata]="metadata.review.metadata" class="app-nested" [showControls]="false"></app-metadata>
+    <app-metadata [metadata]="metadata.review" class="app-nested" [showControls]="false"></app-metadata>
   </div>
 
 

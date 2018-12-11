@@ -1,6 +1,6 @@
 mz-modal.app-dialog-share {
   .modal {
-    max-width: 600px;
+    max-width: 620px;
     .modal-content {
       padding-bottom: 0;
     }
@@ -11,6 +11,13 @@ mz-modal.app-dialog-share {
     input {
       cursor: text;
     }
+  }
+
+  .copy-to-clipboard {
+    position: absolute;
+    right: 0px;
+    cursor: pointer;
+    top: 4px;
   }
 
   .social {

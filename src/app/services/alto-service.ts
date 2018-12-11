@@ -11,7 +11,8 @@ export class AltoService {
       const boxes = [];
 
       //const wordArray = query.replace('-', ' ').replace(/^\s+|\s+$/g, '').replace(/ +(?= )/g,'').replace(/"/g, '').split(' ');
-      const wordArray = query.replace(/^\s+|\s+$/g, '').replace(/ +(?= )/g,'').replace(/"/g, '').split(' ');
+      //const wordArray = query.replace(/^\s+|\s+$/g, '').replace(/ +(?= )/g,'').replace(/"/g, '').split(' ');
+      const wordArray = query.replace(/"/g, '').split(' ');
       const xmlString = alto; // .replace(/xmlns.*=".*"/g, '');
       let xml;
       try {
@@ -38,7 +39,6 @@ export class AltoService {
 
       for (let i = 0; i < wordArray.length; i++) {
         const word = wordArray[i].toLowerCase();
-
         const el = xml.find('String').filter(function() {
           return $(this).attr('CONTENT').toLowerCase().replace(/\-|\?|\!|\;|\)|\(|\.|„|“|"|,|\)/g, '') === word;
         });

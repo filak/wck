@@ -11,6 +11,7 @@ export class ModsParserService {
     }
 
     parse(mods, uuid: string, type: string = 'full'): Metadata {
+        // const xml = mods.replace(/xmlns.*=".*"/g, '');
         const data = {tagNameProcessors: [processors.stripPrefix], explicitCharkey: true};
         const ctx = this;
         let metadata: Metadata;
@@ -156,15 +157,29 @@ export class ModsParserService {
                     if (type === 'date') {
                         author.date = partName['_'];
                     }
-                    // else {
-                    //     author.name = partName['_'];
-                    // }
                 } else {
                     author.name = partName['_'];
                 }
             }
-            if (given && family) {
-                author.name = family + ', ' + given;
+            if (family) {
+                author.name = family;
+                if (given) {
+                    author.name = author.name + ', ' + given;
+                }
+            } else if (given) {
+                author.name = given;
+            }
+            if (item.role) {
+                for (const role of item.role) {
+                    if (role['roleTerm']) {
+                        for (const roleTerm of role['roleTerm']) {
+                            const r = roleTerm['_'];
+                            if (r && this.hasAttribute(roleTerm, 'type', 'code')) {
+                                author.roles.push(r);
+                            }
+                        }
+                    }
+                }
             }
             metadata.authors.push(author);
         }
@@ -218,6 +233,21 @@ export class ModsParserService {
         for (const item of array) {
             const publisher = new Publisher();
             publisher.name = this.getText(item.publisher);
+
+            // publisher.place = ctx.textInElement($(this), ctx.addNS("placeTerm[type='text'][authority!='marccountry']:first"));
+            // var dateOther = ctx.textInElement($(this), ctx.addNS("dateOther:first"));
+
+            if (item.place) {
+                for (const place of item.place) {
+                    if (!(place.placeTerm && place.placeTerm[0])) {
+                        continue;
+                    }
+                    const placeTerm = place.placeTerm[0];
+                    if (this.hasAttribute(placeTerm, 'type', 'text')) {
+                        publisher.place = this.getText(placeTerm);
+                    }
+                }
+            }
             let dateFrom = null;
             let dateTo = null;
             let date = null;
@@ -234,7 +264,13 @@ export class ModsParserService {
                 if (dateFrom && dateTo) {
                     date = dateFrom + '-' + dateTo;
                 }
+                if (date && (date.endsWith('-9999') || date.endsWith('-uuuu'))) {
+                    date = date.substring(0, date.length - 4);
+                }
                 publisher.date = date;
+            }
+            if (!publisher.date) {
+                publisher.date = this.getText(item.dateOther);
             }
             if (!publisher.empty()) {
                 metadata.publishers.push(publisher);
@@ -357,9 +393,6 @@ export class ModsParserService {
             }
         }
     }
-
-
-
 
 
 }
