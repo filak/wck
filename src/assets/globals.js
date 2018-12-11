@@ -4,6 +4,7 @@ var APP_GLOBAL = {
   logo: 'assets/img/nlk-logo-small.png',
   //url: '//kramerius-dev.nlk',
   url: '//kramerius.medvik.cz',
+  richCollections: false,
   joinedDoctypes: false,    // true - K6, false = K5
   lowerPidPath: true,       // false - K6, true = K5
   // valid combinations: ol+zoomify | osd+zoomify | osd+iiif
