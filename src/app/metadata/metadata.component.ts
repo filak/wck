@@ -18,10 +18,12 @@ export class MetadataComponent implements OnInit {
   }
   @Input() metadata: Metadata;
   showingTitle = false;
+  pdfShowLink = false;
 
   constructor(private modalService: MzModalService, private appSettings: AppSettings, private bookService: BookService) { }
 
   ngOnInit() {
+
   }
 
   showTitle() {
@@ -33,7 +35,7 @@ export class MetadataComponent implements OnInit {
   }
 
   showAuthors() {
-    this.modalService.open(DialogAuthosComponent, { authors: this.metadata.authors} );
+    this.modalService.open(DialogAuthosComponent, {authors: this.metadata.authors} );
   }
 
   onShare() {
@@ -77,47 +79,5 @@ export class MetadataComponent implements OnInit {
     return url;
   }
 
-
-  private getDocumentLink(uuid, doctype) {
-
-    let url: string;
-    if (doctype === 'periodical' ) {
-      url = 'periodical/' + uuid;
-    } else {
-      url = 'view/' + uuid;
-    }
-    return url;
-  }
-
-
-  private getLocalLink(localid) {
-
-    let url: string;
-    if (this.appSettings.local_url) {
-      url = this.appSettings.local_url.replace(/\$\{ID\}/, localid);
-      return url;
-    }
-  }
-
-  private getPdfShowLink(bookService) {
-
-    const path = bookService.pdf;
-
-    let uuid: string;
-    if (path.indexOf('uuid:') > -1) {
-      uuid = path.substr(path.indexOf('uuid:'), 41);
-    }
-    if (!uuid) {
-      return;
-    }
-
-    let url: string;
-    if (this.appSettings.pdf_url) {
-      url = this.appSettings.pdf_url.replace(/\$\{UUID\}/, uuid);
-    } else {
-      url = location.protocol + '//' + location.host + '/uuid/' + uuid;
-    }
-    return url;
-  }
 
 }

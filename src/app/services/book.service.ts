@@ -94,18 +94,36 @@ export class BookService {
     }
 
 
-
     private assignPdfPath() {
         if (this.pdf == null) {
             this.pdfPath = null;
             return;
         }
-        let url = 'assets/pdf/viewer.html?file=' + this.pdf;
-        if (this.fulltextQuery) {
-            url += '?query=' + this.fulltextQuery;
+        const path = this.pdf;
+
+        let uuid: string;
+        if (path.indexOf('uuid:') > -1) {
+          uuid = path.substr(path.indexOf('uuid:'), 41);
         }
-        this.pdfPath = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        if (!uuid) {
+          this.pdfPath = null;
+          return;
+        }
+
+        let url: string;
+        if (this.appSettings.pdf_url) {
+          url = this.appSettings.pdf_url.replace(/\$\{UUID\}/, uuid);
+        } else {
+          url = 'assets/pdf/viewer.html?file=' + this.pdf;
+        }
+
+        if (this.fulltextQuery) {
+            url += '#search=' + this.fulltextQuery;
+        }
+        this.pdfPath = url;
+        //this.pdfPath = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
+
 
     init(uuid: string, pageUuid: string, articleUuid: string, intpartUuid: string, fulltext: string) {
         this.clear();
@@ -129,6 +147,7 @@ export class BookService {
                 }
             }
             this.isPrivate = !item.public;
+
             if (item.pdf) {
                 this.showNavigationPanel = false;
                 this.viewer = 'pdf';
@@ -164,6 +183,7 @@ export class BookService {
                 } else if (item.doctype === 'monographunit') {
                     this.loadMonographUnits(item.root_uuid, this.uuid);
                 }
+
                 this.localStorageService.addToVisited(item, this.metadata);
             });
         });
@@ -898,6 +918,7 @@ export class BookService {
                 this.viewer = 'pdf';
                 const purl = this.krameriusApiService.getPdfUrl(page.uuid);
                 this.pdf = purl;
+                this.assignPdfPath();
                 this.publishNewPages(BookPageState.Success);
 
             } else {

@@ -2,19 +2,20 @@
 
   <div class="app-metadata-controls" *ngIf="controlsEnabled">
 
-        <a *ngIf="metadata.identif_local" href="{{getLocalLink(metadata.identif_local)}}" target="_blank">
+        <a *ngIf="metadata.localLink"
+            href="{{metadata.localLink}}" target="_blank">
             <i class="app-mdi-book-source"
                 mz-tooltip [tooltip]="'book_controls.tooltip_source' | translate" [position]="'bottom'"></i>
         </a>
 
-        <a *ngIf="bookService.activeNavigationTab === 'intparts' && metadata.intpart && metadata.intpart.metadata.identif_local"
-            href="{{getLocalLink(metadata.intpart.metadata.identif_local)}}" target="_blank">
+        <a *ngIf="bookService.activeNavigationTab === 'intparts' && metadata.intpart && metadata.intpart.metadata.localLink"
+            href="{{metadata.intpart.metadata.localLink}}" target="_blank">
         <i class="app-mdi-book-article"
             mz-tooltip [tooltip]="'book_controls.tooltip_part' | translate" [position]="'bottom'"></i>
         </a>
 
-        <a *ngIf="bookService.activeNavigationTab === 'articles' && metadata.article && metadata.article.metadata.identif_local"
-            href="{{getLocalLink(metadata.article.metadata.identif_local)}}" target="_blank">
+        <a *ngIf="bookService.activeNavigationTab === 'articles' && metadata.article && metadata.article.metadata.localLink"
+            href="{{metadata.article.metadata.localLink}}" target="_blank">
         <i class="app-mdi-book-article"
             mz-tooltip [tooltip]="'book_controls.tooltip_article' | translate" [position]="'bottom'"></i>
         </a>
@@ -27,7 +28,7 @@
           mz-tooltip [tooltip]="'book_controls.tooltip_metadata' | translate" [position]="'bottom'">
       </i>
 
-        <a *ngIf="bookService.pdf && (bookService.isPrivate == false || bookService.enable_pdf_url)" href="{{getPdfShowLink(bookService)}}" target="_blank">
+        <a *ngIf="bookService.pdf && (bookService.isPrivate == false || bookService.enable_pdf_url) && bookService.pdfPath" href="{{bookService.pdfPath}}" target="_blank">
         <i class="app-mdi-book-pdf"
             mz-tooltip [tooltip]="'book_controls.tooltip_pdf_show' | translate" [position]="'bottom'"></i>
         </a>
@@ -38,7 +39,13 @@
 
     <ng-container *ngIf="metadata.getTitle()">
      
-      <a href="{{getDocumentLink(metadata.uuid, metadata.doctype)}}">
+      <a *ngIf="metadata.doctype === 'periodical'" [routerLink]="['/periodical', metadata.uuid]">
+      <h5 [class.app-cut]="metadata.getTitle().length > 75 && showingTitle == false">
+        {{metadata.getTitle()}}
+      </h5>
+      </a>
+
+      <a *ngIf="metadata.doctype !== 'periodical'" [routerLink]="['/view', metadata.uuid]">
       <h5 [class.app-cut]="metadata.getTitle().length > 75 && showingTitle == false">
         {{metadata.getTitle()}}
       </h5>

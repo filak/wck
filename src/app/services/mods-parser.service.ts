@@ -33,6 +33,7 @@ export class ModsParserService {
         const identif_local = this.processIdentifiers(root['identifier'], metadata);
         if (identif_local) {
             metadata.identif_local = identif_local;
+            metadata.localLink = this.getLocalLink(identif_local);
         }
         this.processTitles(root['titleInfo'], metadata);
         this.processAuthors(root['name'], metadata);
@@ -394,5 +395,13 @@ export class ModsParserService {
         }
     }
 
+    private getLocalLink(localid) {
+
+      let url: string;
+      if (this.appSettings.local_url) {
+        url = this.appSettings.local_url.replace(/\$\{ID\}/, localid);
+        return url;
+      }
+    }
 
 }
