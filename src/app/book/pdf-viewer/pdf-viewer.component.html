@@ -1,4 +1,25 @@
- <div id="app-viewer" class="app-viewer-wrapper" (mousemove)="onMouseMove()">
+<div id="app-viewer" class="app-viewer-wrapper" (mousemove)="onMouseMove()">
+
+<iframe *ngIf="bookService.pdf" [src]="bookService.pdfPath" width="100%" height="100%" frameborder="0"></iframe>
+
+ <!--
+  <pdf-viewer
+    *ngIf="bookService.pdf"
+    [show-all]="true"
+    [original-size]="false"
+    [autoresize]="true"
+    [fit-to-page]="true"
+    [zoom]="zoom"
+    [rotation]="rotation"
+    (cursorToolOnLoad)=1
+    [src]="{
+      url: bookService.pdf,
+      withCredentials: false
+    }"
+    [external-link-target]="'blank'"
+    [stick-to-page]="false">
+  </pdf-viewer>
+  -->
 
   <span *ngIf="controlsService.leftPanelVisible && !controlsService.fullscreenEnabled()"
         class="app-handle app-left-handle valign-wrapper hide-on-small-only"
@@ -51,29 +72,6 @@
 
   </span>
 
-
-  <pdf-viewer
-    *ngIf="bookService.pdf"
-    [show-all]="true"
-    [original-size]="false"
-    [autoresize]="true"
-    [fit-to-page]="true"
-    [zoom]="zoom"
-    [rotation]="rotation"
-    (after-load-complete)="onSuccess($event)"
-    (error)="onError($event)"
-    (cursorToolOnLoad)=1
-    [src]="{
-      url: bookService.pdf,
-      withCredentials: false
-    }"
-    [render-text]="true"
-    [render-text-mode]="2"
-    [external-link-target]="'blank'"
-    [stick-to-page]="false">
-  </pdf-viewer>
-
-
   <app-alert *ngIf="bookService.isPageInaccessible()"
              type="warning"
              title="alert.warning"
@@ -98,4 +96,5 @@
               [size]="'medium'">
   </mz-spinner>
 
- </div>
+
+</div>

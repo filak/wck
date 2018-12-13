@@ -28,7 +28,7 @@
           mz-tooltip [tooltip]="'book_controls.tooltip_metadata' | translate" [position]="'bottom'">
       </i>
 
-        <a *ngIf="bookService.pdf && (bookService.isPrivate == false || bookService.enable_pdf_url) && bookService.pdfPath" href="{{bookService.pdfPath}}" target="_blank">
+        <a *ngIf="bookService.pdf && (bookService.isPrivate == false || bookService.enable_pdf_url) && bookService.pdfPathExt" href="{{bookService.pdfPathExt}}" target="_blank">
         <i class="app-mdi-book-pdf"
             mz-tooltip [tooltip]="'book_controls.tooltip_pdf_show' | translate" [position]="'bottom'"></i>
         </a>

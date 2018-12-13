@@ -18,7 +18,6 @@ export class MetadataComponent implements OnInit {
   }
   @Input() metadata: Metadata;
   showingTitle = false;
-  pdfShowLink = false;
 
   constructor(private modalService: MzModalService, private appSettings: AppSettings, private bookService: BookService) { }
 

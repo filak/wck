@@ -53,6 +53,7 @@ export class BookService {
 
     public pdf: string;
     public pdfPath;
+    public pdfPathExt: string;
     public isPrivate: boolean;
     public enable_pdf_url: boolean;
 
@@ -120,8 +121,8 @@ export class BookService {
         if (this.fulltextQuery) {
             url += '#search=' + this.fulltextQuery;
         }
-        this.pdfPath = url;
-        //this.pdfPath = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+        this.pdfPathExt = url;
+        this.pdfPath = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
 
