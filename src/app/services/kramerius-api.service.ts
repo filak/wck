@@ -199,6 +199,7 @@ export class KrameriusApiService {
 
     getSearchAutocompleteUrl(term: string, onlyPublic: boolean = false): string {
         let query = term.toLowerCase().trim()
+                        .replace(/:|,|=|;|{|}|&|\[|\]|\[|!/g, ' ')
                         .replace(/"/g, '\\"').replace(/~/g, '\\~')
                         .replace(/:/g, '\\:').replace(/-/g, '\\-').replace(/\[/g, '\\[').replace(/\]/g, '\\]').replace(/!/g, '\\!')
                         .split(' ').join(' AND dc.title:');
