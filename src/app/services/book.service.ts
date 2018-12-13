@@ -23,6 +23,7 @@ import { InternalPart } from '../model/internalpart.model';
 import { HistoryService } from './history.service';
 import { SimpleDialogComponent } from '../dialog/simple-dialog/simple-dialog.component';
 import { AppSettings } from './app-settings';
+import { DomSanitizer} from '@angular/platform-browser';
 
 
 
@@ -51,6 +52,7 @@ export class BookService {
     public metadata: Metadata;
 
     public pdf: string;
+    public pdfPath;
     public isPrivate: boolean;
     public enable_pdf_url: boolean;
 
@@ -78,6 +80,7 @@ export class BookService {
         private krameriusApiService: KrameriusApiService,
         private modsParserService: ModsParserService,
         private solrService: SolrService,
+        private sanitizer: DomSanitizer,
         private history: HistoryService,
         private router: Router,
         private modalService: MzModalService,
@@ -89,6 +92,38 @@ export class BookService {
         this.MAX_PAGE_CNT = appSettings.generatePdfMaxRange;
         this.enable_pdf_url = appSettings.enable_pdf_url ;
     }
+
+
+    private assignPdfPath() {
+        if (this.pdf == null) {
+            this.pdfPath = null;
+            return;
+        }
+        const path = this.pdf;
+
+        let uuid: string;
+        if (path.indexOf('uuid:') > -1) {
+          uuid = path.substr(path.indexOf('uuid:'), 41);
+        }
+        if (!uuid) {
+          this.pdfPath = null;
+          return;
+        }
+
+        let url: string;
+        if (this.appSettings.pdf_url) {
+          url = this.appSettings.pdf_url.replace(/\$\{UUID\}/, uuid);
+        } else {
+          url = 'assets/pdf/viewer.html?file=' + this.pdf;
+        }
+
+        if (this.fulltextQuery) {
+            url += '#search=' + this.fulltextQuery;
+        }
+        this.pdfPath = url;
+        //this.pdfPath = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+
 
     init(uuid: string, pageUuid: string, articleUuid: string, intpartUuid: string, fulltext: string) {
         this.clear();
@@ -112,10 +147,12 @@ export class BookService {
                 }
             }
             this.isPrivate = !item.public;
+
             if (item.pdf) {
                 this.showNavigationPanel = false;
                 this.viewer = 'pdf';
                 this.pdf = this.krameriusApiService.getPdfUrl(uuid);
+                this.assignPdfPath();
             } else {
                 this.krameriusApiService.getChildren(uuid).subscribe(response => {
                     if (response && response.length > 0) {
@@ -146,6 +183,7 @@ export class BookService {
                 } else if (item.doctype === 'monographunit') {
                     this.loadMonographUnits(item.root_uuid, this.uuid);
                 }
+
                 this.localStorageService.addToVisited(item, this.metadata);
             });
         });
@@ -479,10 +517,18 @@ export class BookService {
     }
 
     showJpeg() {
+        if (this.pageState === BookPageState.Inaccessible) {
+            this.modalService.open(SimpleDialogComponent, {
+                title: 'common.warning',
+                message: 'dialogs.private_document_jpeg.message',
+                button: 'common.close'
+            });
+        } else if (this.pageState === BookPageState.Success) {
         window.open(this.krameriusApiService.getFullJpegUrl(this.getPage().uuid), '_blank');
         if (this.getRightPage()) {
             window.open(this.krameriusApiService.getFullJpegUrl(this.getRightPage().uuid), '_blank');
         }
+    }
     }
 
     generatePdf() {
@@ -561,7 +607,16 @@ export class BookService {
             for (const page of this.allPages) {
                 page.hidden = true;
                 for (const uuid of result) {
-                    if (uuid === page.uuid) {
+                    var pos = uuid.indexOf('@');
+                    if (pos > -1) {
+                       var uid = uuid.substr(0,pos);
+                    } else {
+                       var uid = uuid;
+                    }
+
+                    if (uid === page.uuid) {
+                        // #TODO:
+                        //page.uuid = uuid;
                         page.selected = false;
                         page.index = index;
                         page.hidden = false;
@@ -687,7 +742,12 @@ export class BookService {
         if (this.activeNavigationTab === tab) {
             return;
         }
-        if (tab === 'articles') {
+        if (tab === 'pages') {
+            this.article = null;
+            this.refreshPages();
+            this.goToPageOnIndex(0);
+
+        } else if (tab === 'articles') {
             this.fulltextQuery = null;
             this.fulltextAllPages = false;
             this.onArticleSelected(this.articles[0]);
@@ -710,6 +770,7 @@ export class BookService {
 
     onArticleSelected(article: Article) {
         this.pdf = null;
+        this.pdfPath = null;
         this.bookState = BookState.Loading;
         this.article = article;
         const urlQuery = 'article=' + article.uuid;
@@ -724,6 +785,55 @@ export class BookService {
             });
         } else {
             this.onArticleLoaded(article);
+        }
+    }
+
+    private onArticleLoaded(article: Article) {
+        this.metadata.article = article;
+        if (article.type === 'pdf') {
+            this.viewer = 'pdf';
+            // this.bookState = BookState.Success;
+            this.pdf = this.krameriusApiService.getPdfUrl(article.uuid);
+            this.assignPdfPath();
+        } else if (article.type === 'pages') {
+            this.publishNewPages(BookPageState.Loading);
+            if (this.article.pages) {
+                this.pages = this.article.pages;
+                this.bookState = BookState.Success;
+                this.goToPageOnIndex(0);
+            } else {
+                this.krameriusApiService.getChildren(article.uuid).subscribe(response => {
+                    let index = 0;
+                    const pages = [];
+                    for (const p of response) {
+                        const page = new Page();
+                        page.uuid = p['pid'];
+                        page.policy = p['policy'];
+                        page.pagetype = '';
+                        const details = p['details'];
+                        if (details) {
+                            page.type = details['type'];
+                            if (page.type) {
+                                page.type = page.type.toLowerCase();
+                            }
+                            page.number = details['pagenumber'];
+                            page.pagetype = page.type;
+                        }
+                        if (!page.number) {
+                            page.number = p['title'];
+                        }
+                        page.index = index;
+                        page.thumb = this.krameriusApiService.getThumbUrl(page.uuid);
+                        page.position = PagePosition.Single;
+                        pages.push(page);
+                        index += 1;
+                    }
+                    this.article.pages = pages;
+                    this.pages = pages;
+                    this.bookState = BookState.Success;
+                    this.goToPageOnIndex(0);
+                });
+            }
         }
     }
 
@@ -752,6 +862,7 @@ export class BookService {
             this.viewer = 'pdf';
             // this.bookState = BookState.Success;
             this.pdf = this.krameriusApiService.getPdfUrl(intpart.uuid);
+            this.assignPdfPath();
         } else if (intpart.type === 'pages') {
             this.publishNewPages(BookPageState.Loading);
             if (this.intpart.pages) {
@@ -795,67 +906,19 @@ export class BookService {
     }
 
 
-    private onArticleLoaded(article: Article) {
-        this.metadata.article = article;
-        if (article.type === 'pdf') {
-            this.viewer = 'pdf';
-            // this.bookState = BookState.Success;
-            this.pdf = this.krameriusApiService.getPdfUrl(article.uuid);
-        } else if (article.type === 'pages') {
-            this.publishNewPages(BookPageState.Loading);
-            if (this.article.pages) {
-                this.pages = this.article.pages;
-                this.bookState = BookState.Success;
-                this.goToPageOnIndex(0);
-            } else {
-                this.krameriusApiService.getChildren(article.uuid).subscribe(response => {
-                    let index = 0;
-                    const pages = [];
-                    for (const p of response) {
-                        const page = new Page();
-                        page.uuid = p['pid'];
-                        page.policy = p['policy'];
-                        page.pagetype = '';
-                        const details = p['details'];
-                        if (details) {
-                            page.type = details['type'];
-                            if (page.type) {
-                                page.type = page.type.toLowerCase();
-                            }
-                            page.number = details['pagenumber'];
-                            page.pagetype = page.type;
-                        }
-                        if (!page.number) {
-                            page.number = p['title'];
-                        }
-                        page.index = index;
-                        page.thumb = this.krameriusApiService.getThumbUrl(page.uuid);
-                        page.position = PagePosition.Single;
-                        pages.push(page);
-                        index += 1;
-                    }
-                    this.article.pages = pages;
-                    this.pages = pages;
-                    this.bookState = BookState.Success;
-                    this.goToPageOnIndex(0);
-                });
-            }
-        }
-    }
-
-
     private fetchItemProperties(leftPage: Page, rightPage: Page, first: boolean) {
 
         const page = first ? leftPage : rightPage;
 
         this.krameriusApiService.getItem(page.uuid).subscribe((item: DocumentItem) => {
 
-            console.log(item);
+            //console.log(item);
 
             if (item.pdf) {
                 this.viewer = 'pdf';
                 const purl = this.krameriusApiService.getPdfUrl(page.uuid);
                 this.pdf = purl;
+                this.assignPdfPath();
                 this.publishNewPages(BookPageState.Success);
 
             } else {
@@ -967,7 +1030,7 @@ export class BookService {
             }
         }
         this.pageState = state;
-        if (state === BookPageState.Success && this.fulltextQuery) {
+        if (state === BookPageState.Success && this.fulltextQuery && this.viewer !== 'pdf') {
             this.krameriusApiService.getAlto(leftPage.uuid).subscribe(response => {
                 const boxes = this.altoService.getBoxes(response, this.fulltextQuery, leftPage.width, leftPage.height);
                 leftPage.altoBoxes = boxes;
@@ -983,6 +1046,7 @@ export class BookService {
 
     clear() {
         this.pdf = null;
+        this.pdfPath = null;
         this.bookState = BookState.None;
         this.pageState = BookPageState.None;
         this.doublePage = false;

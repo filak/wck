@@ -1,12 +1,9 @@
 import { LocalStorageService } from './local-storage.service';
-import { Translator } from 'angular-translator';
-import { Author } from './../model/metadata.model';
 import { Router } from '@angular/router';
 import { KrameriusApiService } from './kramerius-api.service';
 import { SolrService } from './solr.service';
 import { DocumentItem } from './../model/document_item.model';
 import { SearchQuery } from './../search/search_query.model';
-import { Page } from './../model/page.model';
 import { Injectable } from '@angular/core';
 import { CollectionService } from './collection.service';
 import { AppSettings } from './app-settings';
@@ -37,11 +34,7 @@ export class SearchService {
         private solrService: SolrService,
         private localStorageService: LocalStorageService,
         private krameriusApiService: KrameriusApiService,
-        private appSettings: AppSettings,
-        private translator: Translator) {
-            translator.languageChanged.subscribe(() => {
-                this.translateCollections();
-            });
+        private appSettings: AppSettings) {
     }
 
 
@@ -144,7 +137,7 @@ export class SearchService {
         if (this.results.length === 0 || this.getNumberOfResults() === 0) {
             return 0;
         }
-        return Math.min(this.results.length, this.query.getStart() + 1);
+        return this.query.getStart() + 1;
     }
 
 
@@ -189,13 +182,10 @@ export class SearchService {
             }
             case 'collections': {
                 this.collections = this.solrService.facetList(response, SearchQuery.getSolrField('collections'), this.query['collections'], true);
-                if (this.collectionService.ready()) {
-                    this.translateCollections();
-                } else {
+                if (!this.collectionService.ready()) {
                     this.krameriusApiService.getCollections().subscribe(
                         results => {
                             this.collectionService.assign(results);
-                            this.translateCollections();
                         }
                     );
                 }
@@ -234,12 +224,5 @@ export class SearchService {
         this.checkFacet(this.query.languages.length === 0, response, 'languages');
         this.checkFacet(this.query.collections.length === 0, response, 'collections');
     }
-
-    private translateCollections() {
-        for (const col of this.collections) {
-            col['name'] = this.collectionService.getName(col.value);
-        }
-    }
-
 
 }

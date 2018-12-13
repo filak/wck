@@ -1,3 +1,4 @@
+import { AppSettings } from './../services/app-settings';
 import { Metadata, TitleInfo, Author, Publisher, Location, PhysicalDescription } from './../model/metadata.model';
 import { Injectable } from '@angular/core';
 import { parseString, processors, Builder } from 'xml2js';
@@ -6,7 +7,11 @@ import { parseString, processors, Builder } from 'xml2js';
 @Injectable()
 export class ModsParserService {
 
+    constructor(private appSettings: AppSettings) {
+    }
+
     parse(mods, uuid: string, type: string = 'full'): Metadata {
+        // const xml = mods.replace(/xmlns.*=".*"/g, '');
         const data = {tagNameProcessors: [processors.stripPrefix], explicitCharkey: true};
         const ctx = this;
         let metadata: Metadata;
@@ -17,6 +22,7 @@ export class ModsParserService {
                 metadata = ctx.createPlainMetadata(result, uuid);
             }
         });
+        //console.log(metadata);
         return metadata;
     }
 
@@ -24,7 +30,11 @@ export class ModsParserService {
         const metadata = new Metadata();
         metadata.uuid = uuid;
         const root = mods['modsCollection']['mods'][0];
-        metadata.identif_local = this.processIdentifiers(root['identifier'], metadata);
+        const identif_local = this.processIdentifiers(root['identifier'], metadata);
+        if (identif_local) {
+            metadata.identif_local = identif_local;
+            metadata.localLink = this.getLocalLink(identif_local);
+        }
         this.processTitles(root['titleInfo'], metadata);
         this.processAuthors(root['name'], metadata);
         this.processPublishers(root['originInfo'], metadata);
@@ -45,6 +55,11 @@ export class ModsParserService {
         const metadata = new Metadata();
         metadata.uuid = uuid;
         const root = mods['modsCollection']['mods'][0];
+
+        const identif_local = this.processIdentifiers(root['identifier'], metadata);
+        if (identif_local) {
+            metadata.identif_local = identif_local;
+        }
         this.processAuthors(root['name'], metadata);
         this.processLocations(root['location'], metadata);
         this.processSubjects(root['subject'], metadata);
@@ -93,7 +108,11 @@ export class ModsParserService {
                     const end = this.getText(extent.end);
                     metadata.extent = start + '-' + end;
                 } else {
-                    metadata.extent = extent.list[0]._;
+                    if (extent.list) {
+                        metadata.extent = extent.list[0]._;
+                    } else {
+                        metadata.extent = this.getText(extent);
+                    }
                 }
                 return;
             }
@@ -139,15 +158,29 @@ export class ModsParserService {
                     if (type === 'date') {
                         author.date = partName['_'];
                     }
-                    // else {
-                    //     author.name = partName['_'];
-                    // }
                 } else {
                     author.name = partName['_'];
                 }
             }
-            if (given && family) {
-                author.name = family + ', ' + given;
+            if (family) {
+                author.name = family;
+                if (given) {
+                    author.name = author.name + ', ' + given;
+                }
+            } else if (given) {
+                author.name = given;
+            }
+            if (item.role) {
+                for (const role of item.role) {
+                    if (role['roleTerm']) {
+                        for (const roleTerm of role['roleTerm']) {
+                            const r = roleTerm['_'];
+                            if (r && this.hasAttribute(roleTerm, 'type', 'code')) {
+                                author.roles.push(r);
+                            }
+                        }
+                    }
+                }
             }
             metadata.authors.push(author);
         }
@@ -201,6 +234,21 @@ export class ModsParserService {
         for (const item of array) {
             const publisher = new Publisher();
             publisher.name = this.getText(item.publisher);
+
+            // publisher.place = ctx.textInElement($(this), ctx.addNS("placeTerm[type='text'][authority!='marccountry']:first"));
+            // var dateOther = ctx.textInElement($(this), ctx.addNS("dateOther:first"));
+
+            if (item.place) {
+                for (const place of item.place) {
+                    if (!(place.placeTerm && place.placeTerm[0])) {
+                        continue;
+                    }
+                    const placeTerm = place.placeTerm[0];
+                    if (this.hasAttribute(placeTerm, 'type', 'text')) {
+                        publisher.place = this.getText(placeTerm);
+                    }
+                }
+            }
             let dateFrom = null;
             let dateTo = null;
             let date = null;
@@ -217,7 +265,13 @@ export class ModsParserService {
                 if (dateFrom && dateTo) {
                     date = dateFrom + '-' + dateTo;
                 }
+                if (date && (date.endsWith('-9999') || date.endsWith('-uuuu'))) {
+                    date = date.substring(0, date.length - 4);
+                }
                 publisher.date = date;
+            }
+            if (!publisher.date) {
+                publisher.date = this.getText(item.dateOther);
             }
             if (!publisher.empty()) {
                 metadata.publishers.push(publisher);
@@ -335,12 +389,19 @@ export class ModsParserService {
             return;
         }
         for (const item of array) {
-
             if (item.$.type === 'local') {
                 return this.getText(item);
             }
         }
     }
 
+    private getLocalLink(localid) {
+
+      let url: string;
+      if (this.appSettings.local_url) {
+        url = this.appSettings.local_url.replace(/\$\{ID\}/, localid);
+        return url;
+      }
+    }
 
 }

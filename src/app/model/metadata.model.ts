@@ -10,7 +10,6 @@ export class Metadata {
     public modsMap = {};
 
     public uuid: string;
-    public identif_local: string;
     public titles: TitleInfo[] = [];
     public authors: Author[] = [];
     public publishers: Publisher[] = [];
@@ -43,6 +42,8 @@ export class Metadata {
     public volumeMetadata: Metadata;
 
     public mainTitle: string;
+    public identif_local: string;
+    public localLink: string;
 
     constructor() {
     }
@@ -93,12 +94,11 @@ export class Metadata {
             return this.mainTitle;
         }
         if (this.titles.length > 0) {
-            this.mainTitle = this.titles[0].maintTitle();
+            this.mainTitle = this.titles[0].mainTitle();
             return this.mainTitle;
         }
         return '';
     }
-
 
 }
 
@@ -110,7 +110,7 @@ export class TitleInfo {
     public partName;
     public partNumber;
 
-    maintTitle(): string {
+    mainTitle(): string {
         if (this.nonSort) {
             return this.nonSort + ' ' + this.title;
         } else {
@@ -125,8 +125,13 @@ export class Volume {
 }
 
 export class Author {
-    public name;
-    public date;
+    public name: string;
+    public date: string;
+    public roles: string[];
+
+    constructor() {
+        this.roles = [];
+    }
 }
 
 export class Location {

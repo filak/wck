@@ -136,7 +136,8 @@ export class SearchQuery {
         }
         let q = this.query;
         if (!Utils.inQuotes(q)) {
-            q = q.trim().replace(/:|;|{|}|&|\[|\]|!|/g, '').replace(/-/g, '//-');
+            q = q.replace(/:|,|=|;|{|}|&|\[|\]|\[|!/g, ' ').replace(/-/g, '//-').replace(/\./g, '//.');
+            q = q.trim(); // .replace(/:|\?|,|=|;|{|}|&|\[|\]|\[|!/g, ' ').replace(/-/g, '//-').replace(/\./g, '//.');
             while (q.indexOf('  ') > 0) {
                 q = q.replace(/  /g, ' ');
             }
@@ -169,7 +170,7 @@ export class SearchQuery {
         let q = 'q=';
 
         if (qString) {
-            q += '_query_:"{!edismax qf=\'dc.title^10 dc.creator^2 keywords text^0.1\' bq=\'(level:0)^10\' bq=\'(dostupnost:public)^2\' v=$q1}\"';
+            q += '_query_:"{!edismax qf=\'dc.title^10 dc.creator^2 dc.contributor^1.5 keywords text^0.1\' bq=\'(level:0)^10\' bq=\'(dostupnost:public)^2\' v=$q1}\"';
             q += ' AND (fedora.model:monograph^5 OR fedora.model:periodical^5 OR fedora.model:soundrecording OR fedora.model:map OR fedora.model:graphic OR fedora.model:sheetmusic OR fedora.model:archive OR fedora.model:manuscript OR fedora.model:page OR fedora.model:article)';
 
         } else {
@@ -198,13 +199,13 @@ export class SearchQuery {
 
         if (qString) {
             q += '&q1=' + qString
-               + '&fl=PID,dostupnost,model_path,fedora.model,model_path,dc.creator,root_title,root_pid,datum_str,img_full_mime,score'
+               + '&fl=PID,dostupnost,model_path,fedora.model,dc.creator,dc.contributor,root_title,root_pid,datum_str,img_full_mime,score'
                + '&group=true&group.field=root_pid&group.ngroups=true&group.sort=score desc';
 
             q += '&group.truncate=true';
 
         } else {
-            q += '&fl=PID,dostupnost,fedora.model,model_path,dc.creator,dc.title,datum_str,img_full_mime';
+            q += '&fl=PID,dostupnost,fedora.model,model_path,dc.creator,dc.contributor,dc.title,datum_str,img_full_mime';
         }
         q += '&facet=true&facet.mincount=1&facet.field=model_path'
            + this.addFacetToQuery(facet, 'keywords', 'keywords', this.keywords.length === 0)
@@ -287,7 +288,11 @@ export class SearchQuery {
         } else if (this.ordering === 'earliest') {
            return 'datum_begin asc';
         } else if (this.ordering === 'alphabetical') {
-           return 'root_title asc';
+            if (this.getRawQ()) {
+                return 'root_title asc';
+            } else {
+                return 'title_sort asc';
+            }
         }
         return null;
     }
@@ -298,7 +303,7 @@ export class SearchQuery {
         if (skip !== field) {
             if (values.length > 0) {
                 if (field === 'doctypes' && this.hasQueryString()) {
-                    q = ' AND (model_path:*' + values.join('* OR model_path:*') + '*)';
+                    q = ' AND (model_path:' + values.join('* OR model_path:') + '*)';
                 } else {
                     q = ' AND (' + SearchQuery.getSolrField(field) + ':"' + values.join('" OR ' + SearchQuery.getSolrField(field) + ':"') + '")';
                 }

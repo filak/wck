@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 
+(<any>window).pdfWorkerSrc = 'assets/xpdf/pdf.worker.min.js';
 
 @Component({
   selector: 'app-pdf-viewer',

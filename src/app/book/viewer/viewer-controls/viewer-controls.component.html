@@ -5,7 +5,7 @@
     mz-tooltip [tooltip]="'view_controls.tooltip_zoom_in' | translate" [position]="'top'"></i>
   <i class="app-mdi-zoom-out" (click)="controlsService.zoomOut()" id="osd-zoom-out"
     mz-tooltip [tooltip]="'view_controls.tooltip_zoom_out' | translate" [position]="'top'"></i>
-  <i class="app-mdi-fit-to-screen hide-on-small-only" (click)="controlsService.fitToScreen()" *ngIf="bookService.viewer !== 'pdf'" id="osd-go-home"
+  <i class="app-mdi-fit-to-screen" (click)="controlsService.fitToScreen()" *ngIf="bookService.viewer !== 'pdf'" id="osd-go-home"
     mz-tooltip [tooltip]="'view_controls.tooltip_fit_to_screen' | translate" [position]="'top'"></i>
   <i class="app-mdi-fullscreen" *ngIf="controlsService.fullscreenAvailable && !controlsService.fullscreenEnabled()" (click)="controlsService.enterFullscreen()"
     mz-tooltip [tooltip]="'view_controls.tooltip_enter_fullscreen' | translate" [position]="'top'"></i>
