@@ -39,7 +39,6 @@ export class ViewerComponent implements OnInit, OnDestroy {
   public hideOnInactivity = false;
   public lastMouseMove = 0;
 
-
   ngOnInit() {
     this.init();
     this.pageSubscription = this.bookService.watchPage().subscribe(

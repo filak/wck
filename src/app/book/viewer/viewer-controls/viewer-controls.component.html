@@ -11,7 +11,7 @@
     mz-tooltip [tooltip]="'view_controls.tooltip_enter_fullscreen' | translate" [position]="'top'"></i>
   <i class="app-mdi-fullscreen-exit" *ngIf="controlsService.fullscreenAvailable && controlsService.fullscreenEnabled()" (click)="controlsService.exitFullscreen()"
     mz-tooltip [tooltip]="'view_controls.tooltip_exit_fullscreen' | translate" [position]="'top'"></i>
-  <i class="app-mdi-rotate-right" (click)="controlsService.rotateRight()" id="osd-rotate-right"
+  <i class="app-mdi-rotate-right" (click)="controlsService.rotateRight()" id="osd-rotate-right" attr.data-viewer="{{bookService.viewer}}"
     mz-tooltip [tooltip]="'view_controls.tooltip_rotate_right' | translate" [position]="'top'"></i>
   <i class="app-mdi-double-page hide-on-small-only" *ngIf="bookService.doublePageSupported() && bookService.doublePageEnabled && bookService.viewer !== 'pdf'" (click)="bookService.toggleDoublePage()" style="padding-top:5px;"
     mz-tooltip [tooltip]="'view_controls.tooltip_doublepage_off' | translate" [position]="'top'"></i>

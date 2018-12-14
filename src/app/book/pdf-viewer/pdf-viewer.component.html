@@ -1,6 +1,6 @@
-<div id="app-viewer" class="app-viewer-wrapper" (mousemove)="onMouseMove()">
+<div id="app-viewer" class="app-viewer-wrapper" (mousemove)="onMouseMove()" width="100%" height="100%">
 
-<iframe *ngIf="bookService.pdf" [src]="bookService.pdfPath" width="100%" height="100%" frameborder="0"></iframe>
+<iframe *ngIf="bookService.pdf" [src]="bookService.pdfPath" id="pdf-embed" scrolling="no" width="100%" height="100%" frameborder="0"></iframe>
 
  <!--
   <pdf-viewer

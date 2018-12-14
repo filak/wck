@@ -7,6 +7,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 
+declare var $: any;
+
 (<any>window).pdfWorkerSrc = 'assets/xpdf/pdf.worker.min.js';
 
 @Component({
@@ -86,19 +88,23 @@ export class PdfViewerComponent implements  OnInit {
   }
 
   private zoomIn() {
-    this.zoom += 0.2;
+    //this.zoom += 0.2;
+    $('iframe[id="pdf-embed"]').contents().find("#zoomIn").click();
   }
 
   private zoomOut() {
-    this.zoom += -0.2;
+    //this.zoom += -0.2;
+    $('iframe[id="pdf-embed"]').contents().find("#zoomOut").click();
   }
 
   private rotateRight() {
-    this.rotate(90);
+    //this.rotate(90);
+    $('iframe[id="pdf-embed"]').contents().find("#pageRotateCw").click();
   }
 
   private rotateLeft() {
     this.rotate(-90);
+    $('iframe[id="pdf-embed"]').contents().find("#pageRotateCcw").click();
   }
 
   private rotate(angle: number) {

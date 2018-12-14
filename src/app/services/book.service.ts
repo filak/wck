@@ -122,7 +122,10 @@ export class BookService {
             url += '#search=' + this.fulltextQuery;
         }
         this.pdfPathExt = url;
-        this.pdfPath = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+
+        let url_embed: string;
+        url_embed = url.replace('/viewer.html','/embed.html')
+        this.pdfPath = this.sanitizer.bypassSecurityTrustResourceUrl(url_embed);
     }
 
 
@@ -639,13 +642,16 @@ export class BookService {
                 message: 'dialogs.private_sheetmusic.message',
                 button: 'common.close'
             });
-        } else if (this.isPrivate && type === 'generate') {
+        }
+        /*
+        else if (this.isPrivate && type === 'generate') {
             this.modalService.open(SimpleDialogComponent, {
                 title: 'common.warning',
                 message: 'dialogs.private_document_pdf.message',
                 button: 'common.close'
             });
-        } else {
+        } */
+        else {
             this.modalService.open(DialogPdfComponent, {
                 pageCount: this.getPageCount(),
                 currentPage: this.getPage().index,
