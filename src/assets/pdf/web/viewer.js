@@ -704,6 +704,7 @@ var PDFViewerApplication = {
                 eventBus: eventBus
               });
               pdfLinkService.setHistory(this.pdfHistory);
+
               this.findBar = new _pdf_find_bar.PDFFindBar(appConfig.findBar, eventBus, this.l10n);
               this.pdfDocumentProperties = new _pdf_document_properties.PDFDocumentProperties(appConfig.documentProperties, this.overlayManager, eventBus, this.l10n);
               this.pdfCursorTools = new _pdf_cursor_tools.PDFCursorTools({

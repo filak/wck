@@ -1,16 +1,14 @@
 // --- PDF Viewer ---
 
+//iframe body { overflow:hidden; }
+
 app-pdf-viewer {
   flex: 1;
   height: 100%;
   width: 100%;
   background-color: $app-grey-l-4;    
-  overflow: scroll;
+  overflow: hidden;
   position: relative;
-  pdf-viewer {
-    display: block;
-  }
-  
 
   .app-handle {
     position: absolute;
